@@ -4,12 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { v4 as uuid } from 'uuid';
 import { proxy, useProxy } from 'valtio';
-import { POW_DESCRIPT, RAW_CARDS } from './data';
+import { POW, POW_DESCRIPT, RAW_CARDS } from './data';
 
 const newCard = (name) => ({ ...RAW_CARDS.find((e) => e.name == name) });
 const getBaseStat = (name) => RAW_CARDS.find((e) => e.name === name);
-const hasPower = (card, power) =>
-  card.pow.filter(([powName, _]) => powName == power).length > 0;
+const getPower = ({ content }, power) => {
+  const p = content.pow.find(([powName, _]) => powName == power);
+  return p ? p[1] : 0;
+};
 
 const stack1 = [
   { id: uuid(), content: newCard('bird') },
@@ -132,8 +134,21 @@ function Board() {
       //attack
       attCards.forEach((e, i) => {
         try {
-          defCards[i].content.health -= e.content.attack;
-          e.content.health -= defCards[i].content.attack;
+          let pierce = getPower(e, POW.pierce);
+          let totalDmg =
+            Math.max(
+              0,
+              e.content.attack - getPower(defCards[i], POW.armor) - pierce,
+            ) +
+            // pierce goes right through armor
+            pierce;
+          defCards[i].content.health -= totalDmg;
+          const killedEnemy = defCards[i].content.health <= 0;
+          if (killedEnemy) {
+            e.content.health += getPower(e, POW.salvage);
+            e.content.att += getPower(e, POW.absorb);
+          }
+          e.content.health -= getPower(defCards[i], POW.avenge);
         } catch (e) {
           // no adversary
           CURRENT.p2.health -= e.content.attack;
@@ -142,6 +157,11 @@ function Board() {
       // remove dead
       attCards = attCards.filter((e) => e.content.health > 0);
       defCards = defCards.filter((e) => e.content.health > 0);
+      // end of turn powers
+      attCards.forEach((e) => {
+        e.content.health += getPower(e, POW.regen);
+      });
+
       columns.p1Front.items = attCards;
       columns.p2Front.items = defCards;
       // all units in backrow heal 1, up to orig health
@@ -151,13 +171,14 @@ function Board() {
       //     getBaseStat(e.content.name).hp,
       //   );
       // });
+      setColumns(columns);
       CURRENT.state = nextState(snapshot.state);
     } else if (CURRENT.state === STATE.p2.attack) {
-      // asdf\
       // all units in backrow heal 1, up to orig health
       // columns.p2Back.items.forEach((e) => {
       //   e.hp = Math.min(e.hp + 1, getBaseStat(e.name).hp);
       // });
+      // setColumns(columns);
       CURRENT.state = nextState(snapshot.state);
     }
     console.log(
@@ -255,7 +276,7 @@ const Column = ({ columnId, column }) => (
 );
 
 const Card = ({ item, index }) => {
-  const { name, att, hp, pow, wait } = item.content;
+  const { name, attack, health, pow, wait } = item.content;
   const snapshot = useProxy(CURRENT);
 
   return (
@@ -280,8 +301,8 @@ const Card = ({ item, index }) => {
           >
             <strong>{name}</strong>
             <br />
-            <em>{att}</em> att,&nbsp;
-            <em>{hp}</em> HP
+            <em>{attack}</em> att,&nbsp;
+            <em>{health}</em> HP
             <br />
             {pow && (
               <div>
