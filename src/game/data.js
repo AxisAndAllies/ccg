@@ -7,7 +7,7 @@ export const POW = {
   armor: 'armor',
   heal: 'heal',
   regen: 'regen',
-  support: 'support',
+  rally: 'rally',
   absorb: 'absorb',
   rage: 'rage',
 };
@@ -19,9 +19,9 @@ export const POW_DESCRIPT = {
   pierce: 'part of attack that ignores armor',
   ranged: 'attack from afar, immune to `avenge`.', // TODO
   armor: 'reduce damage from each attack',
-  heal: 'heal ally per turn', // TODO
+  heal: 'heal adjacent allies per turn, only works in frontrow',
   regen: 'heal self per turn',
-  support: 'increase ally attack', // TODO
+  rally: 'temporarily increase adjacent allies attack', // TODO
   absorb: 'increase hp on kill, can exceed max hp',
   rage: 'increase attack on kill, can exceed max attack',
 };
@@ -32,6 +32,7 @@ import bigbot from '../assets/bigbot.svg';
 import ent from '../assets/ent.svg';
 import glassCannon from '../assets/glass cannon.svg';
 import hydra from '../assets/hydra.svg';
+import cosmicEgg from '../assets/cosmic egg.svg';
 import magmaTitan from '../assets/magma titan.svg';
 import mage from '../assets/mage.svg';
 import minibot from '../assets/minibot.svg';
@@ -70,6 +71,16 @@ export const RAW_CARDS = [
     wait: 0,
   },
   {
+    name: 'cosmic egg',
+    attack: 2,
+    health: 3,
+    pow: [
+      [POW.armor, 2],
+      [POW.rally, 1],
+    ],
+    wait: 1,
+  },
+  {
     name: 'midbot',
     attack: 4,
     health: 2,
@@ -97,7 +108,10 @@ export const RAW_CARDS = [
     name: 'mage',
     attack: 3,
     health: 5,
-    pow: [[POW.support, 1]],
+    pow: [
+      [POW.rally, 1],
+      [POW.regen, 1],
+    ],
     wait: 1,
   },
   {
@@ -200,6 +214,17 @@ export const RAW_CARDS = [
     pow: [
       [POW.heal, 1],
       [POW.regen, 2],
+    ],
+    wait: 3,
+  },
+  {
+    name: 'snake monster',
+    attack: 2,
+    health: 12,
+    pow: [
+      [POW.poison, 2],
+      [POW.avenge, 2],
+      [POW.pierce, 1],
     ],
     wait: 3,
   },

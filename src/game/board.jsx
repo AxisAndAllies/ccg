@@ -12,6 +12,11 @@ const getPower = ({ content }, power) => {
   const p = content.pow?.find(([powName, _]) => powName == power);
   return p ? p[1] : 0;
 };
+const healUnit = (e, amount) =>
+  (e.content.health = Math.min(
+    e.content.health + amount,
+    getBaseStat(e.content.name).health,
+  ));
 
 const stack1 = [
   { id: uuid(), content: newCard('sauropod') },
@@ -60,7 +65,7 @@ const stack2 = [
 const columnsFromBackend = {
   p1Back: {
     name: 'p1 back (+)',
-    items: sauropod_Deck,
+    items: stack1,
   },
   p1Front: {
     name: 'p1 front',
@@ -72,7 +77,7 @@ const columnsFromBackend = {
   },
   p2Back: {
     name: 'p2 back (+)',
-    items: titandeck,
+    items: stack2,
   },
 };
 
@@ -185,12 +190,16 @@ const processCombat = (attCards, defCards) => {
     defCards,
   };
 };
-const processEndOfTurnActions = (e) => {
+const processEndOfTurnActions = (e, isFrontRow = false) => {
   // regen
-  e.content.health = Math.min(
-    e.content.health + getPower(e, POW.regen),
-    getBaseStat(e.content.name).health,
-  );
+  healUnit(e, getPower(e, POW.regen));
+  if (isFrontRow) {
+    // frontrow reduces wait
+    e.content.wait = Math.max(0, e.content.wait - 1);
+  } else {
+    // backrow gains 1 health per turn
+    healUnit(e, 1);
+  }
 };
 
 function Board() {
@@ -206,29 +215,17 @@ function Board() {
         newCols.p2Front.items,
       );
 
-      attCards.forEach(processEndOfTurnActions);
-      attCards.forEach((e) => {
-        e.content.wait = Math.max(0, e.content.wait - 1);
+      attCards.forEach((e, i) => {
+        processEndOfTurnActions(e, true);
+        const left = i > 0 ? getPower(attCards[i - 1], POW.heal) : 0;
+        const right =
+          i < attCards.length - 1 ? getPower(attCards[i + 1], POW.heal) : 0;
+        healUnit(e, left + right);
       });
-      newCols.p1Back.items.forEach(processEndOfTurnActions);
-      newCols.p1Back.items.forEach((e) => {
-        // backrow gains 1 health per turn
-        e.content.health = Math.min(
-          e.content.health + 1,
-          getBaseStat(e.content.name).health,
-        );
-      });
+      newCols.p1Back.items.forEach((e) => processEndOfTurnActions(e));
 
       newCols.p1Front.items = attCards;
       newCols.p2Front.items = defCards;
-      // all units in backrow heal 1, up to orig health
-      // columns.p1Back.items.forEach((e) => {
-      //   e.content.hp = Math.min(
-      //     e.content.hp + 1,
-      //     getBaseStat(e.content.name).hp,
-      //   );
-      // });
-      // end of turn powers
 
       setColumns(newCols);
       // CURRENT.state = nextState(snapshot.state);
@@ -238,29 +235,18 @@ function Board() {
         newCols.p2Front.items,
         newCols.p1Front.items,
       );
-
-      attCards.forEach(processEndOfTurnActions);
-      attCards.forEach((e) => {
-        e.content.wait = Math.max(0, e.content.wait - 1);
+      attCards.forEach((e, i) => {
+        processEndOfTurnActions(e, true);
+        const left = i > 0 ? getPower(attCards[i - 1], POW.heal) : 0;
+        const right =
+          i < attCards.length - 1 ? getPower(attCards[i + 1], POW.heal) : 0;
+        healUnit(e, left + right);
       });
-      newCols.p2Back.items.forEach(processEndOfTurnActions);
-      newCols.p2Back.items.forEach((e) => {
-        // backrow gains 1 health per turn
-        e.content.health = Math.min(
-          e.content.health + 1,
-          getBaseStat(e.content.name).health,
-        );
-      });
+      newCols.p2Back.items.forEach((e) => processEndOfTurnActions(e));
 
       newCols.p2Front.items = attCards;
       newCols.p1Front.items = defCards;
-      // all units in backrow heal 1, up to orig health
-      // columns.p1Back.items.forEach((e) => {
-      //   e.content.hp = Math.min(
-      //     e.content.hp + 1,
-      //     getBaseStat(e.content.name).hp,
-      //   );
-      // });
+
       setColumns(newCols);
       // CURRENT.state = nextState(snapshot.state);
     }
