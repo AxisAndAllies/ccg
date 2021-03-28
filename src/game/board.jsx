@@ -1,11 +1,12 @@
 //@ts-check
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { v4 as uuid } from 'uuid';
-import { RAW_CARDS } from './data';
+import { POW_DESCRIPT, RAW_CARDS } from './data';
 
-const newCard = (name) => ({ ...RAW_CARDS.filter((e) => e.name == name)[0] });
+const newCard = (name) => ({ ...RAW_CARDS.find((e) => e.name == name) });
+const getBaseStat = (name) => RAW_CARDS.find((e) => e.name === name);
 const hasPower = (card, power) =>
   card.pow.filter(([powName, _]) => powName == power).length > 0;
 
@@ -25,20 +26,20 @@ const stack2 = [
 ];
 
 const columnsFromBackend = {
-  [uuid()]: {
-    name: 'back',
+  p1Back: {
+    name: 'p1 back',
     items: stack1,
   },
-  [uuid()]: {
-    name: 'front',
+  p1Front: {
+    name: 'p1 front',
     items: [],
   },
-  [uuid()]: {
-    name: 'front',
+  p2Front: {
+    name: 'p2 front',
     items: [],
   },
-  [uuid()]: {
-    name: 'back',
+  p2Back: {
+    name: 'p2 back',
     items: stack2,
   },
 };
@@ -55,8 +56,38 @@ const STATE = {
   end: 'end',
 };
 
+const nextState = (curState) => {
+  const { p1, p2 } = STATE;
+  switch (curState) {
+    case p1.move:
+      return p1.attack;
+    case p1.attack:
+      return p2.move;
+    case p2.move:
+      return p2.attack;
+    case p2.attack:
+      return p1.move;
+  }
+};
+
+const resolveTurn = () => {
+  if (CURRENT.state == STATE.p1.attack) {
+    //asdf
+    columnsFromBackend.p1Front.map((e, i) => {
+      //asdf
+    });
+    // all units in backrow heal 1, up to orig health
+    columnsFromBackend.p1Back.forEach((e) => {
+      e.hp = Math.min(e.hp + 1, getBaseStat(e.name).hp);
+    });
+  } else if (CURRENT.state === STATE.p2.attack) {
+    // asdf
+  }
+};
+
 const CURRENT = {
   state: STATE.p1.move,
+  selectedCard: null,
   p1: {
     cards: stack1.map((e) => e.content),
     health: 20,
@@ -106,14 +137,47 @@ const onDragEnd = (result, columns, setColumns) => {
 
 function Board() {
   const [columns, setColumns] = useState(columnsFromBackend);
+
+  useEffect(() => {
+    console.log('wtf');
+  }, [CURRENT.selectedCard?.name]);
   return (
     <>
-      <div>{JSON.stringify(CURRENT)}</div>
+      <pre style={{ margin: '32px', fontSize: '16px' }}>
+        {JSON.stringify(
+          {
+            'current turn': CURRENT.state,
+            'p1 health': CURRENT.p1.health,
+            'p2 health': CURRENT.p2.health,
+          },
+          null,
+          2,
+        )}
+      </pre>
+      <div style={{ margin: '32px', fontSize: '16px' }}>
+        {JSON.stringify(
+          CURRENT.selectedCard?.pow.map(([name, _]) => POW_DESCRIPT[name]),
+        )}
+        {CURRENT.selectedCard || 'doo'}
+      </div>
       <div
         style={{ display: 'flex', justifyContent: 'center', height: '100%' }}
       >
         <DragDropContext
-          onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
+          onDragEnd={(result) => {
+            const { source, destination: dest } = result;
+            const noMove =
+              source.index == dest.index &&
+              source.droppableId == dest.droppableId;
+            if (noMove) {
+              console.log('No move');
+              return;
+            }
+            onDragEnd(result, columns, setColumns);
+            CURRENT.state = nextState(CURRENT.state);
+            CURRENT.selectedCard = null;
+            console.log('moved');
+          }}
         >
           {Object.entries(columns).map(([columnId, column]) => {
             return (
@@ -180,6 +244,10 @@ const Card = ({ item, index }) => {
               color: 'white',
               ...provided.draggableProps.style,
             }}
+            onClick={() => {
+              CURRENT.selectedCard = item.content;
+              console.log(CURRENT.selectedCard);
+            }}
           >
             <strong>{name}</strong>
             <br />
@@ -192,7 +260,11 @@ const Card = ({ item, index }) => {
               </div>
             )}
             <br />
-            ready in <em>{wait}</em>
+            {wait > 0 && (
+              <div>
+                ready in <em>{wait}</em>
+              </div>
+            )}
           </div>
         );
       }}

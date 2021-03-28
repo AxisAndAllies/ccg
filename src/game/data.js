@@ -13,7 +13,6 @@ export const POW = {
 };
 
 export const POW_DESCRIPT = {
-  freeze: 'chance to freeze enemy on attack',
   avenge: 'strike back at attacker',
   poison:
     'applies poison on attack, which deals damage per turn for 3 turns. Does not stack.',
@@ -24,6 +23,8 @@ export const POW_DESCRIPT = {
   heal: 'heal ally per turn',
   regen: 'heal self per turn',
   support: 'increase ally attack',
+  absorb: 'increase hp on kill',
+  salvage: 'increase attack on kill',
 };
 
 export const RAW_CARDS = [
@@ -38,6 +39,28 @@ export const RAW_CARDS = [
     att: 3,
     hp: 1,
     wait: 0,
+  },
+  {
+    name: 'scavenger',
+    att: 3,
+    hp: 3,
+    wait: 1,
+    pow: [
+      [POW.absorb, 1],
+      [POW.salvage, 1],
+      [POW.avenge, 1],
+    ],
+  },
+  {
+    name: 'icebot',
+    att: 3,
+    hp: 5,
+    wait: 1,
+    pow: [
+      [POW.absorb, 1],
+      [POW.freeze, 1],
+      [POW.avenge, 1],
+    ],
   },
   {
     name: 'midbot',
