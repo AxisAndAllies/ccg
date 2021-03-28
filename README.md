@@ -10,3 +10,10 @@ a collectible card game
 - [Valtio](https://github.com/pmndrs/valtio)
   - had to use 0.7.1 since [v0.8.0+ doesn't work w/ Snowpack](https://github.com/pmndrs/valtio/issues/110)
 - All icons from https://game-icons.net/
+
+### TODOS
+
+- more units
+- finish implementing special powers
+- better ergonomics for turns
+- slow down turn animations?

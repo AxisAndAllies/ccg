@@ -268,33 +268,35 @@ function Board() {
   };
 
   return (
-    <>
-      <pre style={{ margin: '32px', fontSize: '16px' }}>
-        {JSON.stringify(
-          {
-            'current turn': snapshot.state,
-            'p1 health': snapshot.p1.health,
-            'p2 health': snapshot.p2.health,
-          },
-          null,
-          2,
-        )}
-      </pre>
-      <pre style={{ margin: '32px', fontSize: '16px', minHeight: '40px' }}>
-        {snapshot.selectedCard?.pow?.map(([name, _]) => (
-          <div>
-            <strong>{name}</strong>: {POW_DESCRIPT[name]}
-          </div>
-        ))}
-      </pre>
-      <button
-        onClick={() => {
-          CURRENT.state = nextState(snapshot.state);
-          resolveTurnActions();
-        }}
-      >
-        next state
-      </button>
+    <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+      <div style={{ width: 600, padding: 50 }}>
+        <pre style={{ margin: '32px', fontSize: '16px' }}>
+          {JSON.stringify(
+            {
+              'current turn': snapshot.state,
+              'p1 health': snapshot.p1.health,
+              'p2 health': snapshot.p2.health,
+            },
+            null,
+            2,
+          )}
+        </pre>
+        <pre style={{ margin: '32px', fontSize: '16px', minHeight: '40px' }}>
+          {snapshot.selectedCard?.pow?.map(([name, _]) => (
+            <div>
+              <strong>{name}</strong>: {POW_DESCRIPT[name]}
+            </div>
+          ))}
+        </pre>
+        <button
+          onClick={() => {
+            CURRENT.state = nextState(snapshot.state);
+            resolveTurnActions();
+          }}
+        >
+          next state
+        </button>
+      </div>
       <div
         style={{ display: 'flex', justifyContent: 'center', height: '100%' }}
       >
@@ -305,11 +307,18 @@ function Board() {
               !dest ||
               (source.index == dest.index &&
                 source.droppableId == dest.droppableId);
+
             if (noMove) {
-              console.log('No move');
               return;
             }
             onDragEnd(result, columns, setColumns);
+
+            const invalidMove =
+              (source.droppableId == 'p1Back' &&
+                dest.droppableId == 'p1Back') ||
+              (source.droppableId == 'p2Back' && dest.droppableId == 'p2Back');
+            if (invalidMove) return;
+
             CURRENT.state = nextState(snapshot.state);
             resolveTurnActions();
             // if (snapshot.state) {
@@ -337,7 +346,7 @@ function Board() {
           })}
         </DragDropContext>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -350,9 +359,11 @@ const Column = ({ columnId, column }) => (
           ref={provided.innerRef}
           style={{
             background: snapshot.isDraggingOver ? 'lightblue' : 'lightgrey',
-            padding: 4,
+            padding: 16,
             width: 250,
             minHeight: 500,
+            overflowY: 'scroll',
+            maxHeight: 1000,
           }}
         >
           {column.items.map((item, index) => {
@@ -430,7 +441,7 @@ const Card = ({ item, index }) => {
                     maxAttack > attack
                       ? 'tomato'
                       : maxAttack < attack
-                      ? 'green'
+                      ? 'Chartreuse'
                       : 'white',
                 }}
               >
@@ -443,7 +454,7 @@ const Card = ({ item, index }) => {
                     maxHealth > health
                       ? 'tomato'
                       : maxHealth < health
-                      ? '#8FBC8F'
+                      ? 'Chartreuse'
                       : 'white',
                 }}
               >
