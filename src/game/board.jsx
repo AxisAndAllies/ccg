@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { v4 as uuid } from 'uuid';
+import { proxy, useProxy } from 'valtio';
 import { POW_DESCRIPT, RAW_CARDS } from './data';
 
 const newCard = (name) => ({ ...RAW_CARDS.find((e) => e.name == name) });
@@ -70,22 +71,7 @@ const nextState = (curState) => {
   }
 };
 
-const resolveTurn = () => {
-  if (CURRENT.state == STATE.p1.attack) {
-    //asdf
-    columnsFromBackend.p1Front.map((e, i) => {
-      //asdf
-    });
-    // all units in backrow heal 1, up to orig health
-    columnsFromBackend.p1Back.forEach((e) => {
-      e.hp = Math.min(e.hp + 1, getBaseStat(e.name).hp);
-    });
-  } else if (CURRENT.state === STATE.p2.attack) {
-    // asdf
-  }
-};
-
-const CURRENT = {
+const CURRENT = proxy({
   state: STATE.p1.move,
   selectedCard: null,
   p1: {
@@ -96,7 +82,7 @@ const CURRENT = {
     cards: stack2.map((e) => e.content),
     health: 20,
   },
-};
+});
 
 const onDragEnd = (result, columns, setColumns) => {
   if (!result.destination) return;
@@ -137,29 +123,71 @@ const onDragEnd = (result, columns, setColumns) => {
 
 function Board() {
   const [columns, setColumns] = useState(columnsFromBackend);
+  const snapshot = useProxy(CURRENT);
 
-  useEffect(() => {
-    console.log('wtf');
-  }, [CURRENT.selectedCard?.name]);
+  const resolveTurnActions = () => {
+    if (CURRENT.state == STATE.p1.attack) {
+      let attCards = columns.p1Front.items;
+      let defCards = columns.p2Front.items;
+      //attack
+      attCards.forEach((e, i) => {
+        try {
+          defCards[i].content.health -= e.content.attack;
+          e.content.health -= defCards[i].content.attack;
+        } catch (e) {
+          // no adversary
+          CURRENT.p2.health -= e.content.attack;
+        }
+      });
+      // remove dead
+      attCards = attCards.filter((e) => e.content.health > 0);
+      defCards = defCards.filter((e) => e.content.health > 0);
+      columns.p1Front.items = attCards;
+      columns.p2Front.items = defCards;
+      // all units in backrow heal 1, up to orig health
+      // columns.p1Back.items.forEach((e) => {
+      //   e.content.hp = Math.min(
+      //     e.content.hp + 1,
+      //     getBaseStat(e.content.name).hp,
+      //   );
+      // });
+      CURRENT.state = nextState(snapshot.state);
+    } else if (CURRENT.state === STATE.p2.attack) {
+      // asdf\
+      // all units in backrow heal 1, up to orig health
+      // columns.p2Back.items.forEach((e) => {
+      //   e.hp = Math.min(e.hp + 1, getBaseStat(e.name).hp);
+      // });
+      CURRENT.state = nextState(snapshot.state);
+    }
+    console.log(
+      snapshot.state,
+      CURRENT.state,
+      columns.p1Front.items,
+      columns.p2Front.items,
+    );
+  };
+
   return (
     <>
       <pre style={{ margin: '32px', fontSize: '16px' }}>
         {JSON.stringify(
           {
-            'current turn': CURRENT.state,
-            'p1 health': CURRENT.p1.health,
-            'p2 health': CURRENT.p2.health,
+            'current turn': snapshot.state,
+            'p1 health': snapshot.p1.health,
+            'p2 health': snapshot.p2.health,
           },
           null,
           2,
         )}
       </pre>
-      <div style={{ margin: '32px', fontSize: '16px' }}>
-        {JSON.stringify(
-          CURRENT.selectedCard?.pow.map(([name, _]) => POW_DESCRIPT[name]),
-        )}
-        {CURRENT.selectedCard || 'doo'}
-      </div>
+      <pre style={{ margin: '32px', fontSize: '16px', minHeight: '40px' }}>
+        {snapshot.selectedCard?.pow?.map(([name, _]) => (
+          <div>
+            <strong>{name}</strong>: {POW_DESCRIPT[name]}
+          </div>
+        ))}
+      </pre>
       <div
         style={{ display: 'flex', justifyContent: 'center', height: '100%' }}
       >
@@ -174,9 +202,9 @@ function Board() {
               return;
             }
             onDragEnd(result, columns, setColumns);
-            CURRENT.state = nextState(CURRENT.state);
+            CURRENT.state = nextState(snapshot.state);
+            resolveTurnActions();
             CURRENT.selectedCard = null;
-            console.log('moved');
           }}
         >
           {Object.entries(columns).map(([columnId, column]) => {
@@ -228,6 +256,8 @@ const Column = ({ columnId, column }) => (
 
 const Card = ({ item, index }) => {
   const { name, att, hp, pow, wait } = item.content;
+  const snapshot = useProxy(CURRENT);
+
   return (
     <Draggable key={item.id} draggableId={item.id} index={index}>
       {(provided, snapshot) => {
@@ -246,7 +276,6 @@ const Card = ({ item, index }) => {
             }}
             onClick={() => {
               CURRENT.selectedCard = item.content;
-              console.log(CURRENT.selectedCard);
             }}
           >
             <strong>{name}</strong>

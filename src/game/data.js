@@ -1,6 +1,5 @@
 // powers
 export const POW = {
-  freeze: 'freeze',
   avenge: 'avenge',
   poison: 'poison',
   pierce: 'pierce',
@@ -10,6 +9,8 @@ export const POW = {
   heal: 'heal',
   regen: 'regen',
   support: 'support',
+  absorb: 'absorb',
+  salvage: 'salvage',
 };
 
 export const POW_DESCRIPT = {
@@ -19,7 +20,7 @@ export const POW_DESCRIPT = {
   pierce: 'negates armor',
   leech: 'takes health on attack',
   ranged: 'attack from afar, immune to avenge.',
-  armor: 'armor negates some damage',
+  armor: 'reduce damage from each attack',
   heal: 'heal ally per turn',
   regen: 'heal self per turn',
   support: 'increase ally attack',
