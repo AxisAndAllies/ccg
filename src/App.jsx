@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
-import Board from './game/board'
+import Board from './main/board';
 
 function App() {
-  return <Board/>
+  return <Board />;
 }
 
 export default App;
