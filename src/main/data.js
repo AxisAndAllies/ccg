@@ -103,7 +103,7 @@ export const RAW_CARDS = [
     name: 'wind slicer',
     attack: 2,
     health: 4,
-    pow: [POW.avenge, 4],
+    pow: [[POW.avenge, 4]],
     wait: 1,
   },
   {
@@ -262,7 +262,7 @@ export const RAW_CARDS = [
   {
     name: 'troll',
     attack: 5,
-    health: 14,
+    health: 13,
     pow: [],
     wait: 3,
   },

@@ -41,7 +41,8 @@ export const CURRENT = proxy({
 });
 
 export const processCombat = (attCards, defCards) => {
-  //attack
+  let extraDamage = 0;
+  // attack
   attCards.forEach((e, i) => {
     if (e.content.wait > 0) {
       return;
@@ -68,7 +69,7 @@ export const processCombat = (attCards, defCards) => {
       }
     } catch (_) {
       // no adversary
-      CURRENT.p2.health -= e.content.attack;
+      extraDamage += e.content.attack;
     }
   });
   // remove dead
@@ -77,6 +78,7 @@ export const processCombat = (attCards, defCards) => {
   return {
     attCards,
     defCards,
+    extraDamage,
   };
 };
 

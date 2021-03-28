@@ -51,8 +51,8 @@ const entdeck = [
   { id: uuid(), content: newCard('ent') },
   { id: uuid(), content: newCard('ent') },
   { id: uuid(), content: newCard('ent') },
-  { id: uuid(), content: newCard('ent') },
-  { id: uuid(), content: newCard('bigshark') },
+  { id: uuid(), content: newCard('wind slicer') },
+  { id: uuid(), content: newCard('troll') },
   { id: uuid(), content: newCard('bigshark') },
   { id: uuid(), content: newCard('big cannon') },
   { id: uuid(), content: newCard('minibot') },
@@ -133,7 +133,7 @@ function Board() {
     if (snapshot.state == STATE.p1.attack) {
       let newCols = { ...columns };
 
-      let { attCards, defCards } = processCombat(
+      let { attCards, defCards, extraDamage } = processCombat(
         newCols.p1Front.items,
         newCols.p2Front.items,
       );
@@ -151,10 +151,11 @@ function Board() {
       newCols.p2Front.items = defCards;
 
       setColumns(newCols);
+      CURRENT.p2.health -= extraDamage;
       // CURRENT.state = nextState(snapshot.state);
     } else if (snapshot.state === STATE.p2.attack) {
       let newCols = { ...columns };
-      let { attCards, defCards } = processCombat(
+      let { attCards, defCards, extraDamage } = processCombat(
         newCols.p2Front.items,
         newCols.p1Front.items,
       );
@@ -171,6 +172,7 @@ function Board() {
       newCols.p1Front.items = defCards;
 
       setColumns(newCols);
+      CURRENT.p1.health -= extraDamage;
       // CURRENT.state = nextState(snapshot.state);
     }
   };
