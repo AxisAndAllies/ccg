@@ -1,31 +1,69 @@
+//@ts-check
+
 import React, { useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { v4 as uuid } from 'uuid';
+import { RAW_CARDS } from './data';
 
-const itemsFromBackend = [
-  { id: uuid(), content: 'First task' },
-  { id: uuid(), content: 'Second task' },
-  { id: uuid(), content: 'Third task' },
-  { id: uuid(), content: 'Fourth task' },
-  { id: uuid(), content: 'Fifth task' },
+const newCard = (name) => ({ ...RAW_CARDS.filter((e) => e.name == name)[0] });
+const hasPower = (card, power) =>
+  card.pow.filter(([powName, _]) => powName == power).length > 0;
+
+const stack1 = [
+  { id: uuid(), content: newCard('bird') },
+  { id: uuid(), content: newCard('minibot') },
+  { id: uuid(), content: newCard('snake') },
+  { id: uuid(), content: newCard('mage') },
+  { id: uuid(), content: newCard('big cannon') },
+];
+const stack2 = [
+  { id: uuid(), content: newCard('midbot') },
+  { id: uuid(), content: newCard('bigbot') },
+  { id: uuid(), content: newCard('shark') },
+  { id: uuid(), content: newCard('bigshark') },
+  { id: uuid(), content: newCard('ent') },
 ];
 
 const columnsFromBackend = {
   [uuid()]: {
-    name: 'Requested',
-    items: itemsFromBackend,
+    name: 'back',
+    items: stack1,
   },
   [uuid()]: {
-    name: 'To do',
+    name: 'front',
     items: [],
   },
   [uuid()]: {
-    name: 'In Progress',
+    name: 'front',
     items: [],
   },
   [uuid()]: {
-    name: 'Done',
-    items: [],
+    name: 'back',
+    items: stack2,
+  },
+};
+
+const STATE = {
+  p1: {
+    move: 'p1move',
+    attack: 'p1attack',
+  },
+  p2: {
+    move: 'p2move',
+    attack: 'p2attack',
+  },
+  end: 'end',
+};
+
+const CURRENT = {
+  state: STATE.p1.move,
+  p1: {
+    cards: stack1.map((e) => e.content),
+    health: 20,
+  },
+  p2: {
+    cards: stack2.map((e) => e.content),
+    health: 20,
   },
 };
 
@@ -69,29 +107,34 @@ const onDragEnd = (result, columns, setColumns) => {
 function Board() {
   const [columns, setColumns] = useState(columnsFromBackend);
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', height: '100%' }}>
-      <DragDropContext
-        onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
+    <>
+      <div>{JSON.stringify(CURRENT)}</div>
+      <div
+        style={{ display: 'flex', justifyContent: 'center', height: '100%' }}
       >
-        {Object.entries(columns).map(([columnId, column], index) => {
-          return (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}
-              key={columnId}
-            >
-              <h2>{column.name}</h2>
-              <div style={{ margin: 8 }}>
-                <Column columnId={columnId} column={column} />
+        <DragDropContext
+          onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
+        >
+          {Object.entries(columns).map(([columnId, column]) => {
+            return (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+                key={columnId}
+              >
+                <h2>{column.name}</h2>
+                <div style={{ margin: 8 }}>
+                  <Column columnId={columnId} column={column} />
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </DragDropContext>
-    </div>
+            );
+          })}
+        </DragDropContext>
+      </div>
+    </>
   );
 }
 
@@ -110,32 +153,7 @@ const Column = ({ columnId, column }) => (
           }}
         >
           {column.items.map((item, index) => {
-            return (
-              <Draggable key={item.id} draggableId={item.id} index={index}>
-                {(provided, snapshot) => {
-                  return (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      style={{
-                        userSelect: 'none',
-                        padding: 16,
-                        margin: '0 0 8px 0',
-                        minHeight: '50px',
-                        backgroundColor: snapshot.isDragging
-                          ? '#263B4A'
-                          : '#456C86',
-                        color: 'white',
-                        ...provided.draggableProps.style,
-                      }}
-                    >
-                      {item.content}
-                    </div>
-                  );
-                }}
-              </Draggable>
-            );
+            return <Card item={item} index={index} />;
           })}
           {provided.placeholder}
         </div>
@@ -143,5 +161,43 @@ const Column = ({ columnId, column }) => (
     }}
   </Droppable>
 );
+
+const Card = ({ item, index }) => {
+  const { name, att, hp, pow, wait } = item.content;
+  return (
+    <Draggable key={item.id} draggableId={item.id} index={index}>
+      {(provided, snapshot) => {
+        return (
+          <div
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            style={{
+              padding: 16,
+              margin: '0 0 8px 0', // if you just specify 8 all around margin you get an ugly pop effect on drop
+              minHeight: '100px',
+              backgroundColor: snapshot.isDragging ? '#263B4A' : '#456C86',
+              color: 'white',
+              ...provided.draggableProps.style,
+            }}
+          >
+            <strong>{name}</strong>
+            <br />
+            <em>{att}</em> att,&nbsp;
+            <em>{hp}</em> HP
+            <br />
+            {pow && (
+              <div>
+                POWERS: <em>{pow}</em>
+              </div>
+            )}
+            <br />
+            ready in <em>{wait}</em>
+          </div>
+        );
+      }}
+    </Draggable>
+  );
+};
 
 export default Board;
