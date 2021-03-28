@@ -89,7 +89,7 @@ export const RAW_CARDS = [
   },
   {
     name: 'wraith',
-    attack: 3,
+    attack: 4,
     health: 7,
     pow: [[POW.absorb, 2]],
     wait: 1,
@@ -116,8 +116,8 @@ export const RAW_CARDS = [
   },
   {
     name: 'spacemarine',
-    attack: 4,
-    health: 5,
+    attack: 5,
+    health: 7,
     pow: [],
     wait: 1,
   },
@@ -141,8 +141,7 @@ export const RAW_CARDS = [
     health: 6,
     pow: [
       [POW.armor, 2],
-      [POW.avenge, 1],
-      [POW.regen, 1],
+      [POW.pierce, 1],
     ],
     wait: 2,
   },
@@ -158,8 +157,8 @@ export const RAW_CARDS = [
   },
   {
     name: 'bigshark',
-    attack: 7,
-    health: 6,
+    attack: 6,
+    health: 7,
     wait: 2,
     pow: [
       [POW.pierce, 2],
@@ -169,7 +168,7 @@ export const RAW_CARDS = [
   {
     name: 'big cannon',
     attack: 6,
-    health: 4,
+    health: 5,
     pow: [
       [POW.armor, 2],
       [POW.avenge, 1],
@@ -230,12 +229,11 @@ export const RAW_CARDS = [
   },
   {
     name: 'magma titan',
-    attack: 3,
-    health: 9,
+    attack: 4,
+    health: 10,
     pow: [
-      [POW.armor, 2],
+      [POW.armor, 1],
       [POW.avenge, 1],
-      [POW.pierce, 1],
     ],
     wait: 3,
   },

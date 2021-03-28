@@ -46,6 +46,7 @@ export const processCombat = (attCards, defCards) => {
     if (e.content.wait > 0) {
       return;
     }
+
     try {
       let pierce = getPower(e, POW.pierce);
       let totalDmg =
@@ -61,7 +62,10 @@ export const processCombat = (attCards, defCards) => {
         e.content.health += getPower(e, POW.absorb);
         e.content.attack += getPower(e, POW.rage);
       }
-      e.content.health -= getPower(defCards[i], POW.avenge);
+      if (e.content.attack > 0) {
+        // for tribal shields
+        e.content.health -= getPower(defCards[i], POW.avenge);
+      }
     } catch (_) {
       // no adversary
       CURRENT.p2.health -= e.content.attack;

@@ -39,12 +39,23 @@ const sauropod_Deck = [
 const titandeck = [
   { id: uuid(), content: newCard('magma titan') },
   { id: uuid(), content: newCard('magma titan') },
-  { id: uuid(), content: newCard('magma titan') },
-  { id: uuid(), content: newCard('magma titan') },
+  { id: uuid(), content: newCard('hydra') },
+  { id: uuid(), content: newCard('spacemarine') },
   { id: uuid(), content: newCard('tribal shield') },
-  { id: uuid(), content: newCard('tribal shield') },
+  { id: uuid(), content: newCard('minibot') },
   { id: uuid(), content: newCard('tribal shield') },
   { id: uuid(), content: newCard('minotaur') },
+];
+
+const entdeck = [
+  { id: uuid(), content: newCard('ent') },
+  { id: uuid(), content: newCard('ent') },
+  { id: uuid(), content: newCard('ent') },
+  { id: uuid(), content: newCard('ent') },
+  { id: uuid(), content: newCard('bigshark') },
+  { id: uuid(), content: newCard('bigshark') },
+  { id: uuid(), content: newCard('big cannon') },
+  { id: uuid(), content: newCard('minibot') },
 ];
 
 const stack2 = [
@@ -53,7 +64,7 @@ const stack2 = [
   { id: uuid(), content: newCard('shark') },
   { id: uuid(), content: newCard('bigshark') },
   { id: uuid(), content: newCard('ent') },
-  { id: uuid(), content: newCard('wraith') },
+  { id: uuid(), content: newCard('bigbot') },
   { id: uuid(), content: newCard('tribal shield') },
   { id: uuid(), content: newCard('minotaur') },
 ];
@@ -61,7 +72,7 @@ const stack2 = [
 const columnsFromBackend = {
   p1Back: {
     name: 'p1 back (+)',
-    items: stack1,
+    items: entdeck,
   },
   p1Front: {
     name: 'p1 front',
@@ -73,7 +84,7 @@ const columnsFromBackend = {
   },
   p2Back: {
     name: 'p2 back (+)',
-    items: stack2,
+    items: sauropod_Deck,
   },
 };
 
