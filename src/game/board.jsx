@@ -121,53 +121,55 @@ const onDragEnd = (result, columns, setColumns) => {
   }
 };
 
+const processCombat = (attCards, defCards) => {
+  //attack
+  attCards
+    .filter((e) => e.content.wait == 0)
+    .forEach((e, i) => {
+      try {
+        let pierce = getPower(e, POW.pierce);
+        let totalDmg =
+          Math.max(
+            0,
+            e.content.attack - getPower(defCards[i], POW.armor) - pierce,
+          ) +
+          // pierce goes right through armor
+          pierce;
+        defCards[i].content.health -= totalDmg;
+        const killedEnemy = defCards[i].content.health <= 0;
+        if (killedEnemy) {
+          e.content.health += getPower(e, POW.salvage);
+          e.content.att += getPower(e, POW.absorb);
+        }
+        e.content.health -= getPower(defCards[i], POW.avenge);
+      } catch (_) {
+        // no adversary
+        CURRENT.p2.health -= e.content.attack;
+      }
+    });
+  // remove dead
+  attCards = attCards.filter((e) => e.content.health > 0);
+  defCards = defCards.filter((e) => e.content.health > 0);
+  return {
+    attCards,
+    defCards,
+  };
+};
+const processEndOfTurnActions = (e) => {
+  if (e.content.wait <= 0) {
+    // regen
+    e.content.health = Math.min(
+      e.content.health + getPower(e, POW.regen),
+      getBaseStat(e.content.name).health,
+    );
+  } else {
+    e.content.wait -= 1;
+  }
+};
+
 function Board() {
   const [columns, setColumns] = useState(columnsFromBackend);
   const snapshot = useProxy(CURRENT, { sync: true });
-
-  const processCombat = (attCards, defCards) => {
-    //attack
-    attCards
-      .filter((e) => e.content.wait == 0)
-      .forEach((e, i) => {
-        try {
-          let pierce = getPower(e, POW.pierce);
-          let totalDmg =
-            Math.max(
-              0,
-              e.content.attack - getPower(defCards[i], POW.armor) - pierce,
-            ) +
-            // pierce goes right through armor
-            pierce;
-          defCards[i].content.health -= totalDmg;
-          const killedEnemy = defCards[i].content.health <= 0;
-          if (killedEnemy) {
-            e.content.health += getPower(e, POW.salvage);
-            e.content.att += getPower(e, POW.absorb);
-          }
-          e.content.health -= getPower(defCards[i], POW.avenge);
-        } catch (_) {
-          // no adversary
-          CURRENT.p2.health -= e.content.attack;
-        }
-      });
-    // remove dead
-    attCards = attCards.filter((e) => e.content.health > 0);
-    defCards = defCards.filter((e) => e.content.health > 0);
-    return {
-      attCards,
-      defCards,
-    };
-  };
-  const processEndOfTurnActions = (e) => {
-    if (e.content.wait == 0) {
-      e.content.health = Math.min(
-        e.content.health + getPower(e, POW.regen),
-        getBaseStat(e.content.name).health,
-      );
-    }
-    e.content.wait = Math.max(0, e.content.wait - 1);
-  };
 
   const resolveTurnActions = () => {
     if (snapshot.state == STATE.p1.attack) {
@@ -181,8 +183,8 @@ function Board() {
       attCards.forEach(processEndOfTurnActions);
       newCols.p1Back.items.forEach(processEndOfTurnActions);
 
-      newCols.p1Front.items = [...attCards];
-      newCols.p2Front.items = [...defCards];
+      newCols.p1Front.items = attCards;
+      newCols.p2Front.items = defCards;
       // all units in backrow heal 1, up to orig health
       // columns.p1Back.items.forEach((e) => {
       //   e.content.hp = Math.min(
@@ -192,7 +194,7 @@ function Board() {
       // });
       // end of turn powers
 
-      setColumns({ ...newCols });
+      setColumns(newCols);
       CURRENT.state = nextState(snapshot.state);
     } else if (snapshot.state === STATE.p2.attack) {
       let newCols = { ...columns };
@@ -204,8 +206,8 @@ function Board() {
       attCards.forEach(processEndOfTurnActions);
       newCols.p2Back.items.forEach(processEndOfTurnActions);
 
-      newCols.p2Front.items = [...attCards];
-      newCols.p1Front.items = [...defCards];
+      newCols.p2Front.items = attCards;
+      newCols.p1Front.items = defCards;
       // all units in backrow heal 1, up to orig health
       // columns.p1Back.items.forEach((e) => {
       //   e.content.hp = Math.min(
@@ -213,7 +215,7 @@ function Board() {
       //     getBaseStat(e.content.name).hp,
       //   );
       // });
-      setColumns({ ...newCols });
+      setColumns(newCols);
       CURRENT.state = nextState(snapshot.state);
     }
     console.log(snapshot.state, columns.p1Front.items, columns.p2Front.items);
@@ -326,7 +328,11 @@ const Card = ({ item, index }) => {
               padding: 16,
               margin: '0 0 8px 0', // if you just specify 8 all around margin you get an ugly pop effect on drop
               minHeight: '120px',
-              backgroundColor: snapshot.isDragging ? '#263B4A' : '#456C86',
+              backgroundColor: snapshot.isDragging
+                ? '#263B4A'
+                : wait > 0
+                ? 'gray'
+                : '#456C86',
               color: 'white',
               ...provided.draggableProps.style,
             }}
