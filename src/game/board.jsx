@@ -123,51 +123,66 @@ const onDragEnd = (result, columns, setColumns) => {
 
 function Board() {
   const [columns, setColumns] = useState(columnsFromBackend);
-  const snapshot = useProxy(CURRENT);
+  const snapshot = useProxy(CURRENT, { sync: true });
 
   const processCombat = (attCards, defCards) => {
     //attack
-    attCards.forEach((e, i) => {
-      try {
-        let pierce = getPower(e, POW.pierce);
-        let totalDmg =
-          Math.max(
-            0,
-            e.content.attack - getPower(defCards[i], POW.armor) - pierce,
-          ) +
-          // pierce goes right through armor
-          pierce;
-        defCards[i].content.health -= totalDmg;
-        const killedEnemy = defCards[i].content.health <= 0;
-        if (killedEnemy) {
-          e.content.health += getPower(e, POW.salvage);
-          e.content.att += getPower(e, POW.absorb);
+    attCards
+      .filter((e) => e.content.wait == 0)
+      .forEach((e, i) => {
+        try {
+          let pierce = getPower(e, POW.pierce);
+          let totalDmg =
+            Math.max(
+              0,
+              e.content.attack - getPower(defCards[i], POW.armor) - pierce,
+            ) +
+            // pierce goes right through armor
+            pierce;
+          defCards[i].content.health -= totalDmg;
+          const killedEnemy = defCards[i].content.health <= 0;
+          if (killedEnemy) {
+            e.content.health += getPower(e, POW.salvage);
+            e.content.att += getPower(e, POW.absorb);
+          }
+          e.content.health -= getPower(defCards[i], POW.avenge);
+        } catch (_) {
+          // no adversary
+          CURRENT.p2.health -= e.content.attack;
         }
-        e.content.health -= getPower(defCards[i], POW.avenge);
-      } catch (_) {
-        // no adversary
-        CURRENT.p2.health -= e.content.attack;
-      }
-    });
+      });
     // remove dead
     attCards = attCards.filter((e) => e.content.health > 0);
     defCards = defCards.filter((e) => e.content.health > 0);
-    // end of turn powers
-    attCards.forEach((e) => {
-      e.content.health += getPower(e, POW.regen);
-    });
+    return {
+      attCards,
+      defCards,
+    };
+  };
+  const processEndOfTurnActions = (e) => {
+    if (e.content.wait == 0) {
+      e.content.health = Math.min(
+        e.content.health + getPower(e, POW.regen),
+        getBaseStat(e.content.name).health,
+      );
+    }
+    e.content.wait = Math.max(0, e.content.wait - 1);
   };
 
   const resolveTurnActions = () => {
     if (snapshot.state == STATE.p1.attack) {
       let newCols = { ...columns };
-      let attCards = newCols.p1Front.items;
-      let defCards = newCols.p2Front.items;
 
-      processCombat(attCards, defCards);
+      let { attCards, defCards } = processCombat(
+        newCols.p1Front.items,
+        newCols.p2Front.items,
+      );
 
-      newCols.p1Front.items = attCards;
-      newCols.p2Front.items = defCards;
+      attCards.forEach(processEndOfTurnActions);
+      newCols.p1Back.items.forEach(processEndOfTurnActions);
+
+      newCols.p1Front.items = [...attCards];
+      newCols.p2Front.items = [...defCards];
       // all units in backrow heal 1, up to orig health
       // columns.p1Back.items.forEach((e) => {
       //   e.content.hp = Math.min(
@@ -175,17 +190,22 @@ function Board() {
       //     getBaseStat(e.content.name).hp,
       //   );
       // });
-      setColumns(newCols);
+      // end of turn powers
+
+      setColumns({ ...newCols });
       CURRENT.state = nextState(snapshot.state);
     } else if (snapshot.state === STATE.p2.attack) {
       let newCols = { ...columns };
-      let attCards = newCols.p2Front.items;
-      let defCards = newCols.p1Front.items;
+      let { attCards, defCards } = processCombat(
+        newCols.p2Front.items,
+        newCols.p1Front.items,
+      );
 
-      processCombat(attCards, defCards);
+      attCards.forEach(processEndOfTurnActions);
+      newCols.p2Back.items.forEach(processEndOfTurnActions);
 
-      newCols.p2Front.items = attCards;
-      newCols.p1Front.items = defCards;
+      newCols.p2Front.items = [...attCards];
+      newCols.p1Front.items = [...defCards];
       // all units in backrow heal 1, up to orig health
       // columns.p1Back.items.forEach((e) => {
       //   e.content.hp = Math.min(
@@ -193,7 +213,7 @@ function Board() {
       //     getBaseStat(e.content.name).hp,
       //   );
       // });
-      setColumns(newCols);
+      setColumns({ ...newCols });
       CURRENT.state = nextState(snapshot.state);
     }
     console.log(snapshot.state, columns.p1Front.items, columns.p2Front.items);
@@ -233,7 +253,6 @@ function Board() {
               return;
             }
             onDragEnd(result, columns, setColumns);
-            CURRENT.selectedCard = null;
             CURRENT.state = nextState(snapshot.state);
             resolveTurnActions();
           }}
@@ -287,7 +306,13 @@ const Column = ({ columnId, column }) => (
 
 const Card = ({ item, index }) => {
   const { name, attack, health, pow, wait } = item.content;
-  const snapshot = useProxy(CURRENT);
+  const numStyle = {
+    fontSize: 24,
+    padding: 8,
+    border: '1px solid black',
+    borderRadius: 8,
+    margin: 4,
+  };
 
   return (
     <Draggable key={item.id} draggableId={item.id} index={index}>
@@ -300,31 +325,31 @@ const Card = ({ item, index }) => {
             style={{
               padding: 16,
               margin: '0 0 8px 0', // if you just specify 8 all around margin you get an ugly pop effect on drop
-              minHeight: '100px',
+              minHeight: '120px',
               backgroundColor: snapshot.isDragging ? '#263B4A' : '#456C86',
               color: 'white',
               ...provided.draggableProps.style,
             }}
-            onClick={() => {
+            onMouseEnter={() => {
               CURRENT.selectedCard = item.content;
             }}
+            onMouseLeave={() => {
+              CURRENT.selectedCard = null;
+            }}
           >
-            <strong>{name}</strong>
-            <br />
-            <em>{attack}</em> att,&nbsp;
-            <em>{health}</em> HP
-            <br />
-            {pow && (
-              <div>
-                POWERS: <em>{pow}</em>
+            <strong>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div>{name}</div> <div>{wait > 0 && ' * '.repeat(wait)}</div>
               </div>
-            )}
+            </strong>
             <br />
-            {wait > 0 && (
-              <div>
-                ready in <em>{wait}</em>
-              </div>
-            )}
+
+            {pow}
+
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div style={numStyle}>{attack}</div>
+              <div style={numStyle}>{health}</div>
+            </div>
           </div>
         );
       }}

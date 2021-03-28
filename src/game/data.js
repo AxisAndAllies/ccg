@@ -16,14 +16,14 @@ export const POW_DESCRIPT = {
   avenge: 'deal damage to attacker',
   poison:
     'applies poison on attack, dealing damage for 3 turns. Does not stack.', // TODO
-  pierce: 'part of attack that ignores armor', // TODO
-  ranged: 'attack from afar, immune to avenge.', // TODO
-  armor: 'reduce damage from each attack', // TODO
+  pierce: 'part of attack that ignores armor',
+  ranged: 'attack from afar, immune to `avenge`.', // TODO
+  armor: 'reduce damage from each attack',
   heal: 'heal ally per turn', // TODO
   regen: 'heal self per turn',
   support: 'increase ally attack', // TODO
-  absorb: 'increase hp on kill',
-  salvage: 'increase attack on kill',
+  absorb: 'increase hp on kill, can exceed max hp',
+  salvage: 'increase attack on kill, can exceed max attack',
 };
 
 export const RAW_CARDS = [

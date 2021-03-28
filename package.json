@@ -12,7 +12,7 @@
     "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^17.0.0",
     "uuid": "^8.3.2",
-    "valtio": "^0.6.1"
+    "valtio": "^0.7.1"
   },
   "devDependencies": {
     "@snowpack/plugin-dotenv": "^2.0.5",
