@@ -43,6 +43,8 @@ import scavenger from '../assets/scavenger.svg';
 import spacemarine from '../assets/spacemarine.svg';
 import shark from '../assets/shark.svg';
 import tribalShield from '../assets/tribal shield.svg';
+import troll from '../assets/troll.svg';
+import windSlicer from '../assets/windSlicer.svg';
 import wraith from '../assets/wraith.svg';
 
 function camelize(text) {
@@ -73,7 +75,7 @@ export const RAW_CARDS = [
   {
     name: 'cosmic egg',
     attack: 2,
-    health: 3,
+    health: 4,
     pow: [
       [POW.armor, 2],
       [POW.rally, 1],
@@ -83,8 +85,11 @@ export const RAW_CARDS = [
   {
     name: 'midbot',
     attack: 4,
-    health: 2,
-    pow: [[POW.armor, 1]],
+    health: 4,
+    pow: [
+      [POW.armor, 2],
+      [POW.rage, 1],
+    ],
     wait: 1,
   },
   {
@@ -92,6 +97,13 @@ export const RAW_CARDS = [
     attack: 4,
     health: 7,
     pow: [[POW.absorb, 2]],
+    wait: 1,
+  },
+  {
+    name: 'wind slicer',
+    attack: 2,
+    health: 4,
+    pow: [POW.avenge, 4],
     wait: 1,
   },
   {
@@ -148,7 +160,7 @@ export const RAW_CARDS = [
   {
     name: 'scavenger',
     attack: 4,
-    health: 6,
+    health: 7,
     wait: 2,
     pow: [
       [POW.absorb, 2],
@@ -219,10 +231,10 @@ export const RAW_CARDS = [
   {
     name: 'snake monster',
     attack: 2,
-    health: 12,
+    health: 10,
     pow: [
       [POW.poison, 2],
-      [POW.avenge, 2],
+      [POW.avenge, 1],
       [POW.pierce, 1],
     ],
     wait: 3,
@@ -245,6 +257,13 @@ export const RAW_CARDS = [
       [POW.rage, 1],
       [POW.armor, 1],
     ],
+    wait: 3,
+  },
+  {
+    name: 'troll',
+    attack: 5,
+    health: 14,
+    pow: [],
     wait: 3,
   },
 ];
