@@ -9,11 +9,11 @@ export const POW = {
   regen: 'regen',
   support: 'support',
   absorb: 'absorb',
-  salvage: 'salvage',
+  rage: 'rage',
 };
 
 export const POW_DESCRIPT = {
-  avenge: 'deal damage to attacker',
+  avenge: 'deal damage to attacker, bypasses armor',
   poison:
     'applies poison on attack, dealing damage for 3 turns. Does not stack.', // TODO
   pierce: 'part of attack that ignores armor',
@@ -23,7 +23,36 @@ export const POW_DESCRIPT = {
   regen: 'heal self per turn',
   support: 'increase ally attack', // TODO
   absorb: 'increase hp on kill, can exceed max hp',
-  salvage: 'increase attack on kill, can exceed max attack',
+  rage: 'increase attack on kill, can exceed max attack',
+};
+
+import bigCannon from '../assets/big cannon.svg';
+import bigshark from '../assets/bigshark.svg';
+import bigbot from '../assets/bigbot.svg';
+import ent from '../assets/ent.svg';
+import glassCannon from '../assets/glass cannon.svg';
+import hydra from '../assets/hydra.svg';
+import magmaTitan from '../assets/magma titan.svg';
+import mage from '../assets/mage.svg';
+import minibot from '../assets/minibot.svg';
+import midbot from '../assets/midbot.svg';
+import minotaur from '../assets/minotaur.svg';
+import sauropod from '../assets/sauropod.svg';
+import scavenger from '../assets/scavenger.svg';
+import shark from '../assets/shark.svg';
+import tribalShield from '../assets/tribal shield.svg';
+import wraith from '../assets/wraith.svg';
+
+function camelize(text) {
+  text = text.replace(/[-_\s.]+(.)?/g, (_, c) => (c ? c.toUpperCase() : ''));
+  return text.substr(0, 1).toLowerCase() + text.substr(1);
+}
+export const getIcon = (name) => {
+  try {
+    return eval(camelize(name));
+  } catch (e) {
+    return '';
+  }
 };
 
 export const RAW_CARDS = [
@@ -78,6 +107,13 @@ export const RAW_CARDS = [
     wait: 1,
   },
   {
+    name: 'shark',
+    attack: 6,
+    health: 4,
+    wait: 1,
+    pow: [[POW.pierce, 1]],
+  },
+  {
     name: 'bigbot',
     attack: 4,
     health: 6,
@@ -94,15 +130,8 @@ export const RAW_CARDS = [
     wait: 2,
     pow: [
       [POW.absorb, 2],
-      [POW.salvage, 2],
+      [POW.rage, 2],
     ],
-  },
-  {
-    name: 'shark',
-    attack: 6,
-    health: 4,
-    wait: 1,
-    pow: [[POW.pierce, 1]],
   },
   {
     name: 'bigshark',
@@ -116,9 +145,22 @@ export const RAW_CARDS = [
   },
   {
     name: 'big cannon',
-    attack: 5,
+    attack: 6,
     health: 4,
-    pow: [[POW.armor, 2]],
+    pow: [
+      [POW.armor, 2],
+      [POW.avenge, 1],
+    ],
+    wait: 2,
+  },
+  {
+    name: 'tribal shield',
+    attack: 0,
+    health: 6,
+    pow: [
+      [POW.avenge, 2],
+      [POW.armor, 2],
+    ],
     wait: 2,
   },
   {
@@ -136,9 +178,41 @@ export const RAW_CARDS = [
     attack: 2,
     health: 10,
     pow: [
-      [POW.armor, 1],
+      [POW.armor, 2],
       [POW.avenge, 1],
       [POW.pierce, 1],
+    ],
+    wait: 3,
+  },
+  {
+    name: 'minotaur',
+    attack: 5,
+    health: 7,
+    pow: [
+      [POW.rage, 1],
+      [POW.pierce, 1],
+      [POW.regen, 1],
+    ],
+    wait: 2,
+  },
+  {
+    name: 'hydra',
+    attack: 5,
+    health: 7,
+    pow: [
+      [POW.rage, 1],
+      [POW.pierce, 1],
+      [POW.regen, 1],
+    ],
+    wait: 2,
+  },
+  {
+    name: 'sauropod',
+    attack: 3,
+    health: 12,
+    pow: [
+      [POW.rage, 1],
+      [POW.armor, 1],
     ],
     wait: 3,
   },

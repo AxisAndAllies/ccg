@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { v4 as uuid } from 'uuid';
 import { proxy, useProxy } from 'valtio';
-import { POW, POW_DESCRIPT, RAW_CARDS } from './data';
+import { getIcon, POW, POW_DESCRIPT, RAW_CARDS } from './data';
 
 const newCard = (name) => ({ ...RAW_CARDS.find((e) => e.name == name) });
 const getBaseStat = (name) => RAW_CARDS.find((e) => e.name === name);
@@ -14,23 +14,25 @@ const getPower = ({ content }, power) => {
 };
 
 const stack1 = [
-  { id: uuid(), content: newCard('bird') },
-  { id: uuid(), content: newCard('minibot') },
+  { id: uuid(), content: newCard('sauropod') },
+  { id: uuid(), content: newCard('midbot') },
   { id: uuid(), content: newCard('snake') },
-  { id: uuid(), content: newCard('mage') },
+  { id: uuid(), content: newCard('magma titan') },
   { id: uuid(), content: newCard('big cannon') },
+  { id: uuid(), content: newCard('scavenger') },
 ];
 const stack2 = [
-  { id: uuid(), content: newCard('midbot') },
+  { id: uuid(), content: newCard('minibot') },
   { id: uuid(), content: newCard('bigbot') },
   { id: uuid(), content: newCard('shark') },
   { id: uuid(), content: newCard('bigshark') },
   { id: uuid(), content: newCard('ent') },
+  { id: uuid(), content: newCard('wraith') },
 ];
 
 const columnsFromBackend = {
   p1Back: {
-    name: 'p1 back',
+    name: 'p1 back (+)',
     items: stack1,
   },
   p1Front: {
@@ -42,7 +44,7 @@ const columnsFromBackend = {
     items: [],
   },
   p2Back: {
-    name: 'p2 back',
+    name: 'p2 back (+)',
     items: stack2,
   },
 };
@@ -123,30 +125,31 @@ const onDragEnd = (result, columns, setColumns) => {
 
 const processCombat = (attCards, defCards) => {
   //attack
-  attCards
-    .filter((e) => e.content.wait == 0)
-    .forEach((e, i) => {
-      try {
-        let pierce = getPower(e, POW.pierce);
-        let totalDmg =
-          Math.max(
-            0,
-            e.content.attack - getPower(defCards[i], POW.armor) - pierce,
-          ) +
-          // pierce goes right through armor
-          pierce;
-        defCards[i].content.health -= totalDmg;
-        const killedEnemy = defCards[i].content.health <= 0;
-        if (killedEnemy) {
-          e.content.health += getPower(e, POW.salvage);
-          e.content.att += getPower(e, POW.absorb);
-        }
-        e.content.health -= getPower(defCards[i], POW.avenge);
-      } catch (_) {
-        // no adversary
-        CURRENT.p2.health -= e.content.attack;
+  attCards.forEach((e, i) => {
+    if (e.content.wait > 0) {
+      return;
+    }
+    try {
+      let pierce = getPower(e, POW.pierce);
+      let totalDmg =
+        Math.max(
+          0,
+          e.content.attack - getPower(defCards[i], POW.armor) - pierce,
+        ) +
+        // pierce goes right through armor
+        pierce;
+      defCards[i].content.health -= totalDmg;
+      const killedEnemy = defCards[i].content.health <= 0;
+      if (killedEnemy) {
+        e.content.health += getPower(e, POW.rage);
+        e.content.att += getPower(e, POW.absorb);
       }
-    });
+      e.content.health -= getPower(defCards[i], POW.avenge);
+    } catch (_) {
+      // no adversary
+      CURRENT.p2.health -= e.content.attack;
+    }
+  });
   // remove dead
   attCards = attCards.filter((e) => e.content.health > 0);
   defCards = defCards.filter((e) => e.content.health > 0);
@@ -156,15 +159,11 @@ const processCombat = (attCards, defCards) => {
   };
 };
 const processEndOfTurnActions = (e) => {
-  if (e.content.wait <= 0) {
-    // regen
-    e.content.health = Math.min(
-      e.content.health + getPower(e, POW.regen),
-      getBaseStat(e.content.name).health,
-    );
-  } else {
-    e.content.wait -= 1;
-  }
+  // regen
+  e.content.health = Math.min(
+    e.content.health + getPower(e, POW.regen),
+    getBaseStat(e.content.name).health,
+  );
 };
 
 function Board() {
@@ -181,7 +180,17 @@ function Board() {
       );
 
       attCards.forEach(processEndOfTurnActions);
+      attCards.forEach((e) => {
+        e.content.wait = Math.max(0, e.content.wait - 1);
+      });
       newCols.p1Back.items.forEach(processEndOfTurnActions);
+      newCols.p1Back.items.forEach((e) => {
+        // backrow gains 1 health per turn
+        e.content.health = Math.min(
+          e.content.health + 1,
+          getBaseStat(e.content.name).health,
+        );
+      });
 
       newCols.p1Front.items = attCards;
       newCols.p2Front.items = defCards;
@@ -195,7 +204,7 @@ function Board() {
       // end of turn powers
 
       setColumns(newCols);
-      CURRENT.state = nextState(snapshot.state);
+      // CURRENT.state = nextState(snapshot.state);
     } else if (snapshot.state === STATE.p2.attack) {
       let newCols = { ...columns };
       let { attCards, defCards } = processCombat(
@@ -204,7 +213,17 @@ function Board() {
       );
 
       attCards.forEach(processEndOfTurnActions);
+      attCards.forEach((e) => {
+        e.content.wait = Math.max(0, e.content.wait - 1);
+      });
       newCols.p2Back.items.forEach(processEndOfTurnActions);
+      newCols.p2Back.items.forEach((e) => {
+        // backrow gains 1 health per turn
+        e.content.health = Math.min(
+          e.content.health + 1,
+          getBaseStat(e.content.name).health,
+        );
+      });
 
       newCols.p2Front.items = attCards;
       newCols.p1Front.items = defCards;
@@ -216,7 +235,7 @@ function Board() {
       //   );
       // });
       setColumns(newCols);
-      CURRENT.state = nextState(snapshot.state);
+      // CURRENT.state = nextState(snapshot.state);
     }
     console.log(snapshot.state, columns.p1Front.items, columns.p2Front.items);
   };
@@ -241,6 +260,14 @@ function Board() {
           </div>
         ))}
       </pre>
+      <button
+        onClick={() => {
+          CURRENT.state = nextState(snapshot.state);
+          resolveTurnActions();
+        }}
+      >
+        next state
+      </button>
       <div
         style={{ display: 'flex', justifyContent: 'center', height: '100%' }}
       >
@@ -248,8 +275,9 @@ function Board() {
           onDragEnd={(result) => {
             const { source, destination: dest } = result;
             const noMove =
-              source.index == dest.index &&
-              source.droppableId == dest.droppableId;
+              !dest ||
+              (source.index == dest.index &&
+                source.droppableId == dest.droppableId);
             if (noMove) {
               console.log('No move');
               return;
@@ -257,6 +285,10 @@ function Board() {
             onDragEnd(result, columns, setColumns);
             CURRENT.state = nextState(snapshot.state);
             resolveTurnActions();
+            // if (snapshot.state) {
+            //   CURRENT.state = nextState(snapshot.state);
+            //   resolveTurnActions();
+            // }
           }}
         >
           {Object.entries(columns).map(([columnId, column]) => {
@@ -308,6 +340,8 @@ const Column = ({ columnId, column }) => (
 
 const Card = ({ item, index }) => {
   const { name, attack, health, pow, wait } = item.content;
+  const maxHealth = getBaseStat(name).health;
+  const maxAttack = getBaseStat(name).attack;
   const numStyle = {
     fontSize: 24,
     padding: 8,
@@ -345,7 +379,16 @@ const Card = ({ item, index }) => {
           >
             <strong>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div>{name}</div> <div>{wait > 0 && ' * '.repeat(wait)}</div>
+                <div>{name}</div>
+                <img
+                  style={{
+                    maxHeight: 60,
+                    borderRadius: '50%',
+                    border: '2px solid white',
+                  }}
+                  src={getIcon(name)}
+                />
+                <div>{wait > 0 && ' * '.repeat(wait)}</div>
               </div>
             </strong>
             <br />
@@ -353,8 +396,32 @@ const Card = ({ item, index }) => {
             {pow}
 
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div style={numStyle}>{attack}</div>
-              <div style={numStyle}>{health}</div>
+              <div
+                style={{
+                  ...numStyle,
+                  color:
+                    maxAttack > attack
+                      ? 'tomato'
+                      : maxAttack < attack
+                      ? 'green'
+                      : 'white',
+                }}
+              >
+                {attack}
+              </div>
+              <div
+                style={{
+                  ...numStyle,
+                  color:
+                    maxHealth > health
+                      ? 'tomato'
+                      : maxHealth < health
+                      ? 'green'
+                      : 'white',
+                }}
+              >
+                {health}
+              </div>
             </div>
           </div>
         );
