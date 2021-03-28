@@ -9,7 +9,7 @@ import { POW, POW_DESCRIPT, RAW_CARDS } from './data';
 const newCard = (name) => ({ ...RAW_CARDS.find((e) => e.name == name) });
 const getBaseStat = (name) => RAW_CARDS.find((e) => e.name === name);
 const getPower = ({ content }, power) => {
-  const p = content.pow.find(([powName, _]) => powName == power);
+  const p = content.pow?.find(([powName, _]) => powName == power);
   return p ? p[1] : 0;
 };
 
@@ -77,11 +77,9 @@ const CURRENT = proxy({
   state: STATE.p1.move,
   selectedCard: null,
   p1: {
-    cards: stack1.map((e) => e.content),
     health: 20,
   },
   p2: {
-    cards: stack2.map((e) => e.content),
     health: 20,
   },
 });
@@ -127,43 +125,49 @@ function Board() {
   const [columns, setColumns] = useState(columnsFromBackend);
   const snapshot = useProxy(CURRENT);
 
-  const resolveTurnActions = () => {
-    if (CURRENT.state == STATE.p1.attack) {
-      let attCards = columns.p1Front.items;
-      let defCards = columns.p2Front.items;
-      //attack
-      attCards.forEach((e, i) => {
-        try {
-          let pierce = getPower(e, POW.pierce);
-          let totalDmg =
-            Math.max(
-              0,
-              e.content.attack - getPower(defCards[i], POW.armor) - pierce,
-            ) +
-            // pierce goes right through armor
-            pierce;
-          defCards[i].content.health -= totalDmg;
-          const killedEnemy = defCards[i].content.health <= 0;
-          if (killedEnemy) {
-            e.content.health += getPower(e, POW.salvage);
-            e.content.att += getPower(e, POW.absorb);
-          }
-          e.content.health -= getPower(defCards[i], POW.avenge);
-        } catch (e) {
-          // no adversary
-          CURRENT.p2.health -= e.content.attack;
+  const processCombat = (attCards, defCards) => {
+    //attack
+    attCards.forEach((e, i) => {
+      try {
+        let pierce = getPower(e, POW.pierce);
+        let totalDmg =
+          Math.max(
+            0,
+            e.content.attack - getPower(defCards[i], POW.armor) - pierce,
+          ) +
+          // pierce goes right through armor
+          pierce;
+        defCards[i].content.health -= totalDmg;
+        const killedEnemy = defCards[i].content.health <= 0;
+        if (killedEnemy) {
+          e.content.health += getPower(e, POW.salvage);
+          e.content.att += getPower(e, POW.absorb);
         }
-      });
-      // remove dead
-      attCards = attCards.filter((e) => e.content.health > 0);
-      defCards = defCards.filter((e) => e.content.health > 0);
-      // end of turn powers
-      attCards.forEach((e) => {
-        e.content.health += getPower(e, POW.regen);
-      });
+        e.content.health -= getPower(defCards[i], POW.avenge);
+      } catch (_) {
+        // no adversary
+        CURRENT.p2.health -= e.content.attack;
+      }
+    });
+    // remove dead
+    attCards = attCards.filter((e) => e.content.health > 0);
+    defCards = defCards.filter((e) => e.content.health > 0);
+    // end of turn powers
+    attCards.forEach((e) => {
+      e.content.health += getPower(e, POW.regen);
+    });
+  };
 
-      columns.p1Front.items = attCards;
-      columns.p2Front.items = defCards;
+  const resolveTurnActions = () => {
+    if (snapshot.state == STATE.p1.attack) {
+      let newCols = { ...columns };
+      let attCards = newCols.p1Front.items;
+      let defCards = newCols.p2Front.items;
+
+      processCombat(attCards, defCards);
+
+      newCols.p1Front.items = attCards;
+      newCols.p2Front.items = defCards;
       // all units in backrow heal 1, up to orig health
       // columns.p1Back.items.forEach((e) => {
       //   e.content.hp = Math.min(
@@ -171,22 +175,28 @@ function Board() {
       //     getBaseStat(e.content.name).hp,
       //   );
       // });
-      setColumns(columns);
+      setColumns(newCols);
       CURRENT.state = nextState(snapshot.state);
-    } else if (CURRENT.state === STATE.p2.attack) {
+    } else if (snapshot.state === STATE.p2.attack) {
+      let newCols = { ...columns };
+      let attCards = newCols.p2Front.items;
+      let defCards = newCols.p1Front.items;
+
+      processCombat(attCards, defCards);
+
+      newCols.p2Front.items = attCards;
+      newCols.p1Front.items = defCards;
       // all units in backrow heal 1, up to orig health
-      // columns.p2Back.items.forEach((e) => {
-      //   e.hp = Math.min(e.hp + 1, getBaseStat(e.name).hp);
+      // columns.p1Back.items.forEach((e) => {
+      //   e.content.hp = Math.min(
+      //     e.content.hp + 1,
+      //     getBaseStat(e.content.name).hp,
+      //   );
       // });
-      // setColumns(columns);
+      setColumns(newCols);
       CURRENT.state = nextState(snapshot.state);
     }
-    console.log(
-      snapshot.state,
-      CURRENT.state,
-      columns.p1Front.items,
-      columns.p2Front.items,
-    );
+    console.log(snapshot.state, columns.p1Front.items, columns.p2Front.items);
   };
 
   return (
@@ -223,9 +233,9 @@ function Board() {
               return;
             }
             onDragEnd(result, columns, setColumns);
+            CURRENT.selectedCard = null;
             CURRENT.state = nextState(snapshot.state);
             resolveTurnActions();
-            CURRENT.selectedCard = null;
           }}
         >
           {Object.entries(columns).map(([columnId, column]) => {
