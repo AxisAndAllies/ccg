@@ -110,7 +110,7 @@ export const RAW_CARDS = [
   {
     name: 'glass cannon',
     attack: 4,
-    health: 1,
+    health: 2,
     pow: [[POW.armor, 3]],
     wait: 1,
   },
@@ -123,7 +123,7 @@ export const RAW_CARDS = [
   },
   {
     name: 'bigbot',
-    attack: 4,
+    attack: 5,
     health: 6,
     pow: [
       [POW.armor, 2],
