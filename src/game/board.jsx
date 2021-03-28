@@ -377,6 +377,8 @@ const Column = ({ columnId, column }) => (
 );
 
 const Card = ({ item, index }) => {
+  const snapshot = useProxy(CURRENT, { sync: true });
+
   const { name, attack, health, pow, wait } = item.content;
   const maxHealth = getBaseStat(name).health;
   const maxAttack = getBaseStat(name).attack;
@@ -389,7 +391,15 @@ const Card = ({ item, index }) => {
   };
 
   return (
-    <Draggable key={item.id} draggableId={item.id} index={index}>
+    <Draggable
+      key={item.id}
+      draggableId={item.id}
+      index={index}
+      // can't move cards in attack phase
+      isDragDisabled={[STATE.p1.attack, STATE.p2.attack].includes(
+        snapshot.state,
+      )}
+    >
       {(provided, snapshot) => {
         return (
           <div
