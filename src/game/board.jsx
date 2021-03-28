@@ -20,7 +20,32 @@ const stack1 = [
   { id: uuid(), content: newCard('magma titan') },
   { id: uuid(), content: newCard('big cannon') },
   { id: uuid(), content: newCard('scavenger') },
+  { id: uuid(), content: newCard('hydra') },
+  { id: uuid(), content: newCard('spacemarine') },
 ];
+
+const sauropod_Deck = [
+  { id: uuid(), content: newCard('sauropod') },
+  { id: uuid(), content: newCard('sauropod') },
+  { id: uuid(), content: newCard('bigshark') },
+  { id: uuid(), content: newCard('magma titan') },
+  { id: uuid(), content: newCard('big cannon') },
+  { id: uuid(), content: newCard('scavenger') },
+  { id: uuid(), content: newCard('hydra') },
+  { id: uuid(), content: newCard('sauropod') },
+];
+
+const titandeck = [
+  { id: uuid(), content: newCard('magma titan') },
+  { id: uuid(), content: newCard('magma titan') },
+  { id: uuid(), content: newCard('magma titan') },
+  { id: uuid(), content: newCard('magma titan') },
+  { id: uuid(), content: newCard('tribal shield') },
+  { id: uuid(), content: newCard('tribal shield') },
+  { id: uuid(), content: newCard('tribal shield') },
+  { id: uuid(), content: newCard('minotaur') },
+];
+
 const stack2 = [
   { id: uuid(), content: newCard('minibot') },
   { id: uuid(), content: newCard('bigbot') },
@@ -28,12 +53,14 @@ const stack2 = [
   { id: uuid(), content: newCard('bigshark') },
   { id: uuid(), content: newCard('ent') },
   { id: uuid(), content: newCard('wraith') },
+  { id: uuid(), content: newCard('tribal shield') },
+  { id: uuid(), content: newCard('minotaur') },
 ];
 
 const columnsFromBackend = {
   p1Back: {
     name: 'p1 back (+)',
-    items: stack1,
+    items: sauropod_Deck,
   },
   p1Front: {
     name: 'p1 front',
@@ -45,7 +72,7 @@ const columnsFromBackend = {
   },
   p2Back: {
     name: 'p2 back (+)',
-    items: stack2,
+    items: titandeck,
   },
 };
 
@@ -141,8 +168,8 @@ const processCombat = (attCards, defCards) => {
       defCards[i].content.health -= totalDmg;
       const killedEnemy = defCards[i].content.health <= 0;
       if (killedEnemy) {
-        e.content.health += getPower(e, POW.rage);
-        e.content.att += getPower(e, POW.absorb);
+        e.content.health += getPower(e, POW.absorb);
+        e.content.attack += getPower(e, POW.rage);
       }
       e.content.health -= getPower(defCards[i], POW.avenge);
     } catch (_) {
@@ -416,7 +443,7 @@ const Card = ({ item, index }) => {
                     maxHealth > health
                       ? 'tomato'
                       : maxHealth < health
-                      ? 'green'
+                      ? '#8FBC8F'
                       : 'white',
                 }}
               >

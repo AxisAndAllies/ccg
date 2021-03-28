@@ -39,6 +39,7 @@ import midbot from '../assets/midbot.svg';
 import minotaur from '../assets/minotaur.svg';
 import sauropod from '../assets/sauropod.svg';
 import scavenger from '../assets/scavenger.svg';
+import spacemarine from '../assets/spacemarine.svg';
 import shark from '../assets/shark.svg';
 import tribalShield from '../assets/tribal shield.svg';
 import wraith from '../assets/wraith.svg';
@@ -57,7 +58,7 @@ export const getIcon = (name) => {
 
 export const RAW_CARDS = [
   {
-    name: 'bird',
+    name: 'crow',
     attack: 2,
     health: 3,
     wait: 0,
@@ -100,6 +101,13 @@ export const RAW_CARDS = [
     wait: 1,
   },
   {
+    name: 'spacemarine',
+    attack: 4,
+    health: 5,
+    pow: [],
+    wait: 1,
+  },
+  {
     name: 'glass cannon',
     attack: 4,
     health: 1,
@@ -120,6 +128,7 @@ export const RAW_CARDS = [
     pow: [
       [POW.armor, 2],
       [POW.avenge, 1],
+      [POW.regen, 1],
     ],
     wait: 2,
   },
@@ -164,6 +173,27 @@ export const RAW_CARDS = [
     wait: 2,
   },
   {
+    name: 'minotaur',
+    attack: 5,
+    health: 7,
+    pow: [
+      [POW.armor, 1],
+      [POW.pierce, 1],
+      [POW.rage, 1],
+    ],
+    wait: 2,
+  },
+  {
+    name: 'hydra',
+    attack: 4,
+    health: 7,
+    pow: [
+      [POW.avenge, 1],
+      [POW.regen, 3],
+    ],
+    wait: 2,
+  },
+  {
     name: 'ent',
     attack: 1,
     health: 14,
@@ -175,36 +205,14 @@ export const RAW_CARDS = [
   },
   {
     name: 'magma titan',
-    attack: 2,
-    health: 10,
+    attack: 3,
+    health: 9,
     pow: [
       [POW.armor, 2],
       [POW.avenge, 1],
       [POW.pierce, 1],
     ],
     wait: 3,
-  },
-  {
-    name: 'minotaur',
-    attack: 5,
-    health: 7,
-    pow: [
-      [POW.rage, 1],
-      [POW.pierce, 1],
-      [POW.regen, 1],
-    ],
-    wait: 2,
-  },
-  {
-    name: 'hydra',
-    attack: 5,
-    health: 7,
-    pow: [
-      [POW.rage, 1],
-      [POW.pierce, 1],
-      [POW.regen, 1],
-    ],
-    wait: 2,
   },
   {
     name: 'sauropod',
