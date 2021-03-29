@@ -29,15 +29,17 @@ export const POW_DESCRIPT = {
 };
 
 import bigCannon from '../assets/big cannon.svg';
-import bigshark from '../assets/bigshark.svg';
 import bigbot from '../assets/bigbot.svg';
+import bigshark from '../assets/bigshark.svg';
+import cosmicEgg from '../assets/cosmic egg.svg';
 import crow from '../assets/crow.svg';
 import ent from '../assets/ent.svg';
 import glassCannon from '../assets/glass cannon.svg';
+import griffin from '../assets/griffin.svg';
 import hydra from '../assets/hydra.svg';
-import cosmicEgg from '../assets/cosmic egg.svg';
-import magmaTitan from '../assets/magma titan.svg';
+import lancer from '../assets/lancer.svg';
 import mage from '../assets/mage.svg';
+import magmaTitan from '../assets/magma titan.svg';
 import minibot from '../assets/minibot.svg';
 import midbot from '../assets/midbot.svg';
 import minotaur from '../assets/minotaur.svg';
@@ -46,10 +48,13 @@ import scavenger from '../assets/scavenger.svg';
 import snake from '../assets/snake.svg';
 import snakeMonster from '../assets/snake monster.svg';
 import spacemarine from '../assets/spacemarine.svg';
+import spider from '../assets/spider.svg';
+import spikeTroll from '../assets/spike troll.svg';
 import shark from '../assets/shark.svg';
 import tribalShield from '../assets/tribal shield.svg';
 import troll from '../assets/troll.svg';
 import uberbot from '../assets/uberbot.svg';
+import unicorn from '../assets/unicorn.svg';
 import windSlicer from '../assets/windSlicer.svg';
 import wraith from '../assets/wraith.svg';
 
@@ -76,6 +81,13 @@ export const RAW_CARDS = [
     name: 'minibot',
     attack: 3,
     health: 1,
+    wait: 0,
+  },
+  {
+    name: 'unicorn',
+    attack: 1,
+    health: 3,
+    pow: [[POW.weaken, 1]],
     wait: 0,
   },
   {
@@ -194,6 +206,37 @@ export const RAW_CARDS = [
     ],
   },
   {
+    name: 'lancer',
+    attack: 5,
+    health: 4,
+    wait: 2,
+    pow: [
+      [POW.pierce, 2],
+      [POW.armor, 3],
+    ],
+  },
+  {
+    name: 'spider',
+    attack: 3,
+    health: 6,
+    wait: 2,
+    pow: [
+      [POW.poison, 1],
+      [POW.weaken, 1],
+      [POW.avenge, 2],
+    ],
+  },
+  {
+    name: 'spike troll',
+    attack: 2,
+    health: 8,
+    wait: 2,
+    pow: [
+      [POW.weaken, 1],
+      [POW.rage, 2],
+    ],
+  },
+  {
     name: 'big cannon',
     attack: 6,
     health: 5,
@@ -279,6 +322,17 @@ export const RAW_CARDS = [
     attack: 5,
     health: 13,
     pow: [],
+    wait: 3,
+  },
+  {
+    name: 'griffin',
+    attack: 3,
+    health: 10,
+    pow: [
+      [POW.armor, 1],
+      [POW.regen, 1],
+      [POW.weaken, 1],
+    ],
     wait: 3,
   },
 ];
