@@ -50,7 +50,7 @@ export const processCombat = (attCards, defCards) => {
 
     try {
       let pierce = getPower(e, POW.pierce);
-      let totalDmg =
+      const totalDmg =
         Math.max(
           0,
           e.content.attack - getPower(defCards[i], POW.armor) - pierce,
@@ -58,6 +58,19 @@ export const processCombat = (attCards, defCards) => {
         // pierce goes right through armor
         pierce;
       defCards[i].content.health -= totalDmg;
+      // poison enemy
+      const poison = getPower(e, POW.poison);
+      if (poison && !defCards[i].poisoned?.turns) {
+        defCards[i].poisoned = { turns: 3, amount: poison };
+      }
+      // weaken enemy
+      const weaken = getPower(e, POW.weaken);
+      if (weaken && !defCards[i].weakened?.turns) {
+        defCards[i].weakened = { turns: 3, amount: weaken };
+        // weaken acts immediately
+        defCards[i].content.attack -= weaken;
+      }
+
       const killedEnemy = defCards[i].content.health <= 0;
       if (killedEnemy) {
         e.content.health += getPower(e, POW.absorb);
@@ -85,6 +98,26 @@ export const processCombat = (attCards, defCards) => {
 export const processEndOfTurnActions = (e, isFrontRow = false) => {
   // regen
   healUnit(e, getPower(e, POW.regen));
+  // poison
+  if (e.poisoned?.turns) {
+    // take damage
+    e.content.health -= e.poisoned.amount;
+
+    e.poisoned.turns -= 1;
+    if (e.poisoned.turns == 0) {
+      e.poisoned.amount = 0;
+    }
+  }
+  // weaken
+  if (e.weakened?.turns) {
+    e.weakened.turns -= 1;
+    if (e.weakened.turns == 0) {
+      // restores attack power
+      e.content.attack += e.weakened.amount;
+
+      e.weakened.amount = 0;
+    }
+  }
   if (isFrontRow) {
     // frontrow reduces wait
     e.content.wait = Math.max(0, e.content.wait - 1);

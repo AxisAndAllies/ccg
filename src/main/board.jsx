@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { v4 as uuid } from 'uuid';
 import { useProxy } from 'valtio';
-import { getIcon, POW, POW_DESCRIPT } from './data';
+import { getIcon, POW, POW_DESCRIPT, RAW_CARDS } from './data';
 import {
   CURRENT,
   STATE,
@@ -69,6 +69,11 @@ const stack2 = [
   { id: uuid(), content: newCard('minotaur') },
 ];
 
+const allcards = RAW_CARDS.map((e) => ({
+  id: uuid(),
+  content: newCard(e.name),
+}));
+
 const columnsFromBackend = {
   p1Back: {
     name: 'p1 back',
@@ -85,6 +90,10 @@ const columnsFromBackend = {
   p2Back: {
     name: 'p2 back',
     items: stack2,
+  },
+  stash: {
+    name: 'stash',
+    items: allcards,
   },
 };
 const sum = (arr) => arr.reduce((a, b) => a + b, 0);
@@ -295,7 +304,7 @@ const Column = ({ columnId, column }) => (
 
 const Card = ({ item, index }) => {
   const snapshot = useProxy(CURRENT, { sync: true });
-
+  const { poisoned, weakened } = item;
   const { name, attack, health, pow, wait } = item.content;
   const maxHealth = getBaseStat(name).health;
   const maxAttack = getBaseStat(name).attack;
@@ -359,6 +368,15 @@ const Card = ({ item, index }) => {
             <br />
 
             {pow}
+            <br />
+            <div style={{ color: 'purple' }}>
+              {poisoned?.turns > 0 &&
+                `poisoned (${poisoned.amount}) for ${poisoned.turns}`}
+            </div>
+            <div style={{ color: 'yellow' }}>
+              {weakened?.turns > 0 &&
+                `weakened (${weakened.amount}) for ${weakened.turns}`}
+            </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div

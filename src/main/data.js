@@ -10,12 +10,13 @@ export const POW = {
   rally: 'rally',
   absorb: 'absorb',
   rage: 'rage',
+  weaken: 'weaken',
 };
 
 export const POW_DESCRIPT = {
   avenge: 'deal damage to attacker, bypasses armor',
   poison:
-    'applies poison on attack, dealing damage for 3 turns. Does not stack.', // TODO
+    'applies poison on attack, dealing damage for 3 turns. Does not stack.',
   pierce: 'part of attack that ignores armor',
   ranged: 'attack from afar, immune to `avenge`.', // TODO
   armor: 'reduce damage from each attack',
@@ -24,6 +25,7 @@ export const POW_DESCRIPT = {
   rally: 'temporarily increase adjacent allies attack', // TODO
   absorb: 'increase hp on kill, can exceed max hp',
   rage: 'increase attack on kill, can exceed max attack',
+  weaken: 'reduce enemy attack for 3 turns. Does not stack.',
 };
 
 import bigCannon from '../assets/big cannon.svg';
@@ -44,6 +46,7 @@ import spacemarine from '../assets/spacemarine.svg';
 import shark from '../assets/shark.svg';
 import tribalShield from '../assets/tribal shield.svg';
 import troll from '../assets/troll.svg';
+import uberbot from '../assets/uberbot.svg';
 import windSlicer from '../assets/windSlicer.svg';
 import wraith from '../assets/wraith.svg';
 
@@ -132,7 +135,7 @@ export const RAW_CARDS = [
     health: 5,
     pow: [
       [POW.rally, 1],
-      [POW.regen, 1],
+      [POW.weaken, 1],
     ],
     wait: 1,
   },
@@ -214,6 +217,16 @@ export const RAW_CARDS = [
     pow: [
       [POW.avenge, 1],
       [POW.regen, 3],
+    ],
+    wait: 2,
+  },
+  {
+    name: 'uberbot',
+    attack: 2,
+    health: 9,
+    pow: [
+      [POW.rage, 2],
+      [POW.pierce, 1],
     ],
     wait: 2,
   },
