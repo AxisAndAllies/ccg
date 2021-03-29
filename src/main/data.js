@@ -58,7 +58,7 @@ import unicorn from '../assets/unicorn.svg';
 import windSlicer from '../assets/windSlicer.svg';
 import wraith from '../assets/wraith.svg';
 
-function camelize(text) {
+export function camelize(text) {
   text = text.replace(/[-_\s.]+(.)?/g, (_, c) => (c ? c.toUpperCase() : ''));
   return text.substr(0, 1).toLowerCase() + text.substr(1);
 }

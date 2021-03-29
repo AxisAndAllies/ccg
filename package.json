@@ -11,6 +11,7 @@
     "react": "^17.0.0",
     "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^17.0.0",
+    "react-vis": "^1.11.7",
     "uuid": "^8.3.2",
     "valtio": "^0.7.1"
   },
