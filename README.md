@@ -2,6 +2,10 @@
 
 a collectible card game
 
+### Screenshot:
+
+![screenshot](./play1.png)
+
 ### Made with:
 
 - [create-snowpack-app](./README_CSA.md) with starter react template

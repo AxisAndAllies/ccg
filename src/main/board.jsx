@@ -88,7 +88,7 @@ const allcards = RAW_CARDS.map((e) => ({
 const columnsFromBackend = {
   p1Back: {
     name: 'p1 back',
-    items: entdeck,
+    items: griffindeck,
   },
   p1Front: {
     name: 'p1 front',
@@ -100,7 +100,7 @@ const columnsFromBackend = {
   },
   p2Back: {
     name: 'p2 back',
-    items: stack2,
+    items: stack1,
   },
   stash: {
     name: 'stash',
