@@ -31,6 +31,7 @@ export const POW_DESCRIPT = {
 import bigCannon from '../assets/big cannon.svg';
 import bigshark from '../assets/bigshark.svg';
 import bigbot from '../assets/bigbot.svg';
+import crow from '../assets/crow.svg';
 import ent from '../assets/ent.svg';
 import glassCannon from '../assets/glass cannon.svg';
 import hydra from '../assets/hydra.svg';
@@ -42,6 +43,8 @@ import midbot from '../assets/midbot.svg';
 import minotaur from '../assets/minotaur.svg';
 import sauropod from '../assets/sauropod.svg';
 import scavenger from '../assets/scavenger.svg';
+import snake from '../assets/snake.svg';
+import snakeMonster from '../assets/snake monster.svg';
 import spacemarine from '../assets/spacemarine.svg';
 import shark from '../assets/shark.svg';
 import tribalShield from '../assets/tribal shield.svg';
