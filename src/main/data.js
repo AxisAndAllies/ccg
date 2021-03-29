@@ -63,13 +63,23 @@ export const RAW_CARDS = [
   {
     name: 'crow',
     attack: 2,
-    health: 3,
+    health: 4,
     wait: 0,
   },
   {
     name: 'minibot',
     attack: 3,
     health: 1,
+    wait: 0,
+  },
+  {
+    name: 'tribal shield',
+    attack: 0,
+    health: 6,
+    pow: [
+      [POW.avenge, 2],
+      [POW.armor, 2],
+    ],
     wait: 0,
   },
   {
@@ -188,22 +198,11 @@ export const RAW_CARDS = [
     wait: 2,
   },
   {
-    name: 'tribal shield',
-    attack: 0,
-    health: 6,
-    pow: [
-      [POW.avenge, 2],
-      [POW.armor, 2],
-    ],
-    wait: 2,
-  },
-  {
     name: 'minotaur',
     attack: 5,
     health: 7,
     pow: [
       [POW.armor, 1],
-      [POW.pierce, 1],
       [POW.rage, 1],
     ],
     wait: 2,
@@ -220,7 +219,7 @@ export const RAW_CARDS = [
   },
   {
     name: 'ent',
-    attack: 1,
+    attack: 2,
     health: 14,
     pow: [
       [POW.heal, 1],

@@ -50,7 +50,7 @@ const titandeck = [
 const entdeck = [
   { id: uuid(), content: newCard('ent') },
   { id: uuid(), content: newCard('ent') },
-  { id: uuid(), content: newCard('ent') },
+  { id: uuid(), content: newCard('midbot') },
   { id: uuid(), content: newCard('wind slicer') },
   { id: uuid(), content: newCard('troll') },
   { id: uuid(), content: newCard('bigshark') },
@@ -65,13 +65,13 @@ const stack2 = [
   { id: uuid(), content: newCard('bigshark') },
   { id: uuid(), content: newCard('ent') },
   { id: uuid(), content: newCard('bigbot') },
-  { id: uuid(), content: newCard('tribal shield') },
+  { id: uuid(), content: newCard('wind slicer') },
   { id: uuid(), content: newCard('minotaur') },
 ];
 
 const columnsFromBackend = {
   p1Back: {
-    name: 'p1 back (+)',
+    name: 'p1 back',
     items: entdeck,
   },
   p1Front: {
@@ -83,10 +83,17 @@ const columnsFromBackend = {
     items: [],
   },
   p2Back: {
-    name: 'p2 back (+)',
-    items: sauropod_Deck,
+    name: 'p2 back',
+    items: stack2,
   },
 };
+const sum = (arr) => arr.reduce((a, b) => a + b, 0);
+columnsFromBackend.p1Back.name += `(${sum(
+  columnsFromBackend.p1Back.items.map(({ content }) => content.wait),
+)})`;
+columnsFromBackend.p2Back.name += `(${sum(
+  columnsFromBackend.p2Back.items.map(({ content }) => content.wait),
+)})`;
 
 const onDragEnd = (result, columns, setColumns) => {
   if (!result.destination) return;
