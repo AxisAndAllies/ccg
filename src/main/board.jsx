@@ -36,6 +36,17 @@ const sauropod_Deck = [
   { id: uuid(), content: newCard('sauropod') },
 ];
 
+const griffindeck = [
+  { id: uuid(), content: newCard('hydra') },
+  { id: uuid(), content: newCard('sauropod') },
+  { id: uuid(), content: newCard('bigshark') },
+  { id: uuid(), content: newCard('snake monster') },
+  { id: uuid(), content: newCard('big cannon') },
+  { id: uuid(), content: newCard('minotaur') },
+  { id: uuid(), content: newCard('ent') },
+  { id: uuid(), content: newCard('griffin') },
+];
+
 const titandeck = [
   { id: uuid(), content: newCard('magma titan') },
   { id: uuid(), content: newCard('magma titan') },
@@ -48,14 +59,14 @@ const titandeck = [
 ];
 
 const entdeck = [
+  { id: uuid(), content: newCard('unicorn') },
   { id: uuid(), content: newCard('ent') },
-  { id: uuid(), content: newCard('ent') },
-  { id: uuid(), content: newCard('midbot') },
-  { id: uuid(), content: newCard('wind slicer') },
-  { id: uuid(), content: newCard('troll') },
+  { id: uuid(), content: newCard('sauropod') },
+  { id: uuid(), content: newCard('spider') },
+  { id: uuid(), content: newCard('lancer') },
   { id: uuid(), content: newCard('bigshark') },
-  { id: uuid(), content: newCard('big cannon') },
-  { id: uuid(), content: newCard('minibot') },
+  { id: uuid(), content: newCard('snake monster') },
+  { id: uuid(), content: newCard('troll') },
 ];
 
 const stack2 = [
@@ -77,7 +88,7 @@ const allcards = RAW_CARDS.map((e) => ({
 const columnsFromBackend = {
   p1Back: {
     name: 'p1 back',
-    items: entdeck,
+    items: griffindeck,
   },
   p1Front: {
     name: 'p1 front',
@@ -89,7 +100,7 @@ const columnsFromBackend = {
   },
   p2Back: {
     name: 'p2 back',
-    items: stack2,
+    items: entdeck,
   },
   stash: {
     name: 'stash',
@@ -161,6 +172,8 @@ function Board() {
           i < attCards.length - 1 ? getPower(attCards[i + 1], POW.heal) : 0;
         healUnit(e, left + right);
       });
+      // remove dead from end-of-turn actions
+      attCards = attCards.filter(({ content }) => content.health > 0);
       newCols.p1Back.items.forEach((e) => processEndOfTurnActions(e));
 
       newCols.p1Front.items = attCards;
@@ -182,6 +195,8 @@ function Board() {
           i < attCards.length - 1 ? getPower(attCards[i + 1], POW.heal) : 0;
         healUnit(e, left + right);
       });
+      // remove dead from end-of-turn actions
+      attCards = attCards.filter(({ content }) => content.health > 0);
       newCols.p2Back.items.forEach((e) => processEndOfTurnActions(e));
 
       newCols.p2Front.items = attCards;

@@ -87,7 +87,7 @@ export const RAW_CARDS = [
     name: 'unicorn',
     attack: 1,
     health: 3,
-    pow: [[POW.weaken, 1]],
+    pow: [[POW.weaken, 2]],
     wait: 0,
   },
   {

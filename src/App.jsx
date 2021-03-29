@@ -8,7 +8,7 @@ const MODES = {
   play: 'play',
 };
 function App() {
-  const [mode, setMode] = useState(MODES.explore);
+  const [mode, setMode] = useState(MODES.play);
   return (
     <>
       <button
