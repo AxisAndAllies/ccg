@@ -44,7 +44,7 @@ const griffindeck = [
   { id: uuid(), content: newCard('big cannon') },
   { id: uuid(), content: newCard('minotaur') },
   { id: uuid(), content: newCard('ent') },
-  { id: uuid(), content: newCard('griffin') },
+  { id: uuid(), content: newCard('tribal shield') },
 ];
 
 const titandeck = [
@@ -60,23 +60,23 @@ const titandeck = [
 
 const entdeck = [
   { id: uuid(), content: newCard('unicorn') },
-  { id: uuid(), content: newCard('ent') },
-  { id: uuid(), content: newCard('sauropod') },
-  { id: uuid(), content: newCard('spider') },
+  { id: uuid(), content: newCard('unicorn') },
+  { id: uuid(), content: newCard('griffin') },
+  { id: uuid(), content: newCard('griffin') },
   { id: uuid(), content: newCard('lancer') },
-  { id: uuid(), content: newCard('bigshark') },
+  { id: uuid(), content: newCard('lancer') },
   { id: uuid(), content: newCard('snake monster') },
-  { id: uuid(), content: newCard('troll') },
+  { id: uuid(), content: newCard('snake monster') },
+  { id: uuid(), content: newCard('bigshark') },
 ];
 
 const stack2 = [
   { id: uuid(), content: newCard('minibot') },
-  { id: uuid(), content: newCard('bigbot') },
-  { id: uuid(), content: newCard('shark') },
   { id: uuid(), content: newCard('bigshark') },
   { id: uuid(), content: newCard('ent') },
-  { id: uuid(), content: newCard('bigbot') },
-  { id: uuid(), content: newCard('wind slicer') },
+  { id: uuid(), content: newCard('ent') },
+  { id: uuid(), content: newCard('snake monster') },
+  { id: uuid(), content: newCard('snake monster') },
   { id: uuid(), content: newCard('minotaur') },
 ];
 
@@ -88,7 +88,7 @@ const allcards = RAW_CARDS.map((e) => ({
 const columnsFromBackend = {
   p1Back: {
     name: 'p1 back',
-    items: griffindeck,
+    items: entdeck,
   },
   p1Front: {
     name: 'p1 front',
@@ -100,7 +100,7 @@ const columnsFromBackend = {
   },
   p2Back: {
     name: 'p2 back',
-    items: entdeck,
+    items: stack2,
   },
   stash: {
     name: 'stash',

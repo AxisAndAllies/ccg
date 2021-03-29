@@ -13,7 +13,7 @@ a collectible card game
 
 ### TODOS
 
-- more units
+- fix ABSORB
 - finish implementing special powers
 - better ergonomics for turns
 - slow down turn animations?

@@ -218,7 +218,7 @@ export const RAW_CARDS = [
   {
     name: 'spider',
     attack: 3,
-    health: 6,
+    health: 7,
     wait: 2,
     pow: [
       [POW.poison, 1],
@@ -232,7 +232,7 @@ export const RAW_CARDS = [
     health: 8,
     wait: 2,
     pow: [
-      [POW.weaken, 1],
+      [POW.weaken, 2],
       [POW.rage, 2],
     ],
   },
@@ -289,7 +289,7 @@ export const RAW_CARDS = [
   {
     name: 'snake monster',
     attack: 2,
-    health: 10,
+    health: 9,
     pow: [
       [POW.poison, 2],
       [POW.avenge, 1],
