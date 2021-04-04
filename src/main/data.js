@@ -225,7 +225,6 @@ export const RAW_CARDS = [
     wait: 2,
     pow: [
       [POW.poison, 1],
-      [POW.weaken, 1],
       [POW.avenge, 2],
     ],
   },

@@ -4,7 +4,25 @@ a collectible card game
 
 ### Screenshot:
 
-![screenshot](./play1.png)
+![screenshot](./play2.png)
+
+### Unit Abilities:
+
+```
+avenge: 'deal damage to attacker, bypasses armor',
+poison:
+  'applies poison on attack, dealing damage for 3 turns. Does not stack.',
+pierce: 'part of attack that ignores armor',
+ranged: 'attack from afar, immune to `avenge`.', // TODO
+armor: 'reduce damage from each attack',
+heal: 'heal adjacent allies per turn, only works in frontrow',
+regen: 'heal self per turn',
+rally: 'temporarily increase adjacent allies attack',
+absorb: 'increase hp on kill, can exceed max hp',
+rage: 'increase attack on kill, can exceed max attack',
+weaken: 'reduce enemy attack for 3 turns. Does not stack.',
+immune: 'immune to weaken and poison', // TODO
+```
 
 ### Made with:
 

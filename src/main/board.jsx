@@ -393,15 +393,16 @@ const Card = ({ item, index }) => {
   const numStyle = {
     fontSize: 24,
     fontWeight: 600,
-    borderRadius: '20%',
+    borderRadius: '35%',
     width: 40,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     height: 40,
-    marginBottom: '-20px',
-    marginLeft: '-10px',
-    marginRight: '-10px',
+    marginTop: 20,
+    marginBottom: -20,
+    marginLeft: -10,
+    marginRight: -10,
   };
 
   return (
@@ -437,6 +438,7 @@ const Card = ({ item, index }) => {
               boxShadow: snapshot.isDragging
                 ? '5px 5px 10px black'
                 : '5px 5px 10px gray',
+              marginBottom: 16,
               ...provided.draggableProps.style,
             }}
             onMouseEnter={() => {
