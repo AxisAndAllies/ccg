@@ -294,6 +294,7 @@ function Board() {
           ))}
         </div>
         <button
+          style={{ fontSize: 20, minHeight: '4em', minWidth: '8em' }}
           onClick={() => {
             CURRENT.state = nextState(snapshot.state);
             resolveTurnActions();
