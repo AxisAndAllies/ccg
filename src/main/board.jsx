@@ -271,25 +271,29 @@ function Board() {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-      <div style={{ width: 600, padding: 50 }}>
-        <pre style={{ margin: '32px', fontSize: '16px' }}>
-          {JSON.stringify(
-            {
-              'current turn': snapshot.state,
-              'p1 health': snapshot.p1.health,
-              'p2 health': snapshot.p2.health,
-            },
-            null,
-            2,
-          )}
-        </pre>
-        <pre style={{ margin: '32px', fontSize: '16px', minHeight: '40px' }}>
+      <div style={{ width: 600, padding: 50, margin: 32 }}>
+        {Object.entries({
+          'current turn': snapshot.state,
+          'p1 health': snapshot.p1.health,
+          'p2 health': snapshot.p2.health,
+        }).map(([k, v]) => (
+          <div>
+            <strong>{k}:</strong> {v}
+          </div>
+        ))}
+        <div
+          style={{
+            fontSize: 16,
+            minHeight: 40,
+            paddingTop: 32,
+          }}
+        >
           {snapshot.selectedCard?.pow?.map(([name, _]) => (
-            <div>
+            <div style={{ marginBottom: 12 }}>
               <strong>{name}</strong>: {POW_DESCRIPT[name]}
             </div>
           ))}
-        </pre>
+        </div>
         <button
           onClick={() => {
             CURRENT.state = nextState(snapshot.state);
