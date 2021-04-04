@@ -38,6 +38,15 @@ export const healUnit = (e, amount) => {
 };
 
 /**
+ * Sets the bonus attack for a unit, from rally
+ * @param {*} e
+ * @param {*} amount
+ */
+export const rallyUnit = (e, amount) => {
+  e.rallyAttack = amount;
+};
+
+/**
  * Sleep for a number of millliseconds
  * @param {*} ms
  * @returns

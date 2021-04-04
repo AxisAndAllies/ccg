@@ -50,11 +50,9 @@ export const processCombat = async (attCards, defCards) => {
 
     try {
       let pierce = getPower(e, POW.pierce);
+      const regularAttack = e.content.attack + (e.rallyAttack || 0);
       const totalDmg =
-        Math.max(
-          0,
-          e.content.attack - getPower(defCards[i], POW.armor) - pierce,
-        ) +
+        Math.max(0, regularAttack - getPower(defCards[i], POW.armor) - pierce) +
         // pierce goes right through armor
         pierce;
       defCards[i].content.health -= totalDmg;
@@ -76,8 +74,8 @@ export const processCombat = async (attCards, defCards) => {
         e.content.health += getPower(e, POW.absorb);
         e.content.attack += getPower(e, POW.rage);
       }
-      if (e.content.attack > 0) {
-        // for tribal shields
+      if (totalDmg > 0) {
+        // things w/ 0 attack don't attack (eg. tribal shields)
         e.content.health -= getPower(defCards[i], POW.avenge);
       }
     } catch (_) {

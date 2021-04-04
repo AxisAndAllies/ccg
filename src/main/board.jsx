@@ -12,7 +12,14 @@ import {
   processEndOfTurnActions,
   nextState,
 } from './game';
-import { newCard, getPower, healUnit, getBaseStat, sleep } from './helpers';
+import {
+  newCard,
+  getPower,
+  healUnit,
+  getBaseStat,
+  sleep,
+  rallyUnit,
+} from './helpers';
 
 const stack1 = [
   { id: uuid(), content: newCard('sauropod') },
@@ -172,6 +179,23 @@ function Board() {
   const [columns, setColumns] = useState(columnsFromBackend);
   const snapshot = useProxy(CURRENT, { sync: true });
 
+  const doFrontRowEndOfTurnActions = (cards) => {
+    cards.forEach((e, i) => {
+      processEndOfTurnActions(e, true);
+      // heal power
+      const leftHeal = i > 0 ? getPower(cards[i - 1], POW.heal) : 0;
+      const rightHeal =
+        i < cards.length - 1 ? getPower(cards[i + 1], POW.heal) : 0;
+      healUnit(e, leftHeal + rightHeal);
+      // recalculate rally power
+      const leftRally = i > 0 ? getPower(cards[i - 1], POW.rally) : 0;
+      const rightRally =
+        i < cards.length - 1 ? getPower(cards[i + 1], POW.rally) : 0;
+      rallyUnit(e, leftRally + rightRally);
+    });
+    return cards;
+  };
+
   const resolveTurnActions = async () => {
     if (snapshot.state == STATE.p1.attack) {
       let newCols = { ...columns };
@@ -184,13 +208,8 @@ function Board() {
       // wait a bit to not be too jarring
       await sleep(750);
 
-      attCards.forEach((e, i) => {
-        processEndOfTurnActions(e, true);
-        const left = i > 0 ? getPower(attCards[i - 1], POW.heal) : 0;
-        const right =
-          i < attCards.length - 1 ? getPower(attCards[i + 1], POW.heal) : 0;
-        healUnit(e, left + right);
-      });
+      attCards = doFrontRowEndOfTurnActions(attCards);
+
       // remove dead from end-of-turn actions
       attCards = attCards.filter(({ content }) => content.health > 0);
       newCols.p1Back.items.forEach((e) => processEndOfTurnActions(e));
@@ -211,13 +230,8 @@ function Board() {
       // wait a bit to not be too jarring
       await sleep(750);
 
-      attCards.forEach((e, i) => {
-        processEndOfTurnActions(e, true);
-        const left = i > 0 ? getPower(attCards[i - 1], POW.heal) : 0;
-        const right =
-          i < attCards.length - 1 ? getPower(attCards[i + 1], POW.heal) : 0;
-        healUnit(e, left + right);
-      });
+      attCards = doFrontRowEndOfTurnActions(attCards);
+
       // remove dead from end-of-turn actions
       attCards = attCards.filter(({ content }) => content.health > 0);
       newCols.p2Back.items.forEach((e) => processEndOfTurnActions(e));
@@ -283,6 +297,22 @@ function Board() {
               (source.droppableId == 'p2Back' && dest.droppableId == 'p2Back');
             if (invalidMove) return;
 
+            // recalculate rally power
+            // let newCols = { ...columns };
+            // let attCards = newCols.p1Front.items;
+            // attCards.forEach((e, i) => {
+            //   const leftRally =
+            //     i > 0 ? getPower(attCards[i - 1], POW.rally) : 0;
+            //   const rightRally =
+            //     i < attCards.length - 1
+            //       ? getPower(attCards[i + 1], POW.rally)
+            //       : 0;
+            //   healUnit(e, leftRally + rightRally);
+            // });
+            // newCols.p1Front.items = attCards;
+            // setColumns(newCols);
+
+            // transition to attack phase
             CURRENT.state = nextState(snapshot.state);
             resolveTurnActions();
             // if (snapshot.state) {
@@ -342,8 +372,9 @@ const Column = ({ columnId, column }) => (
 
 const Card = ({ item, index }) => {
   const snapshot = useProxy(CURRENT, { sync: true });
-  const { poisoned, weakened } = item;
-  const { name, attack, health, pow, wait } = item.content;
+  const { poisoned, weakened, rallyAttack } = item;
+  let { name, attack, health, pow, wait } = item.content;
+  attack += rallyAttack || 0;
   const maxHealth = getBaseStat(name).health;
   const maxAttack = getBaseStat(name).attack;
   const numStyle = {
