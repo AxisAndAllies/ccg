@@ -17,7 +17,5 @@ a collectible card game
 
 ### TODOS
 
-- fix ABSORB
-- finish implementing special powers
+- finish implementing special powers (RANGED, IMMUNE)
 - better ergonomics for turns
-- slow down turn animations?

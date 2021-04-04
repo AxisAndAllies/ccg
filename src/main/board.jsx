@@ -393,10 +393,7 @@ const Card = ({ item, index }) => {
   const maxAttack = getBaseStat(name).attack;
   const numStyle = {
     fontSize: 24,
-    padding: 8,
-    border: '1px solid black',
-    borderRadius: 8,
-    margin: 4,
+    fontWeight: 600,
   };
 
   return (
@@ -417,14 +414,21 @@ const Card = ({ item, index }) => {
             {...provided.dragHandleProps}
             style={{
               padding: 16,
+              borderRadius: 12,
               margin: '0 0 8px 0', // if you just specify 8 all around margin you get an ugly pop effect on drop
               minHeight: '120px',
               backgroundColor: snapshot.isDragging
-                ? '#263B4A'
+                ? wait > 0
+                  ? '#444'
+                  : '#263B4A'
                 : wait > 0
                 ? 'gray'
                 : '#456C86',
               color: 'white',
+              border: wait > 0 ? '2px solid white' : '2px solid white',
+              boxShadow: snapshot.isDragging
+                ? '5px 5px 10px black'
+                : '5px 5px 10px gray',
               ...provided.draggableProps.style,
             }}
             onMouseEnter={() => {
@@ -436,7 +440,6 @@ const Card = ({ item, index }) => {
           >
             <strong>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div>{name}</div>
                 <img
                   style={{
                     maxHeight: 60,
@@ -445,7 +448,10 @@ const Card = ({ item, index }) => {
                   }}
                   src={getIcon(name)}
                 />
-                <div>{wait > 0 && ' * '.repeat(wait)}</div>
+                <div>
+                  <div style={{ paddingBottom: '1em' }}>{name}</div>
+                  <div>{wait > 0 && ' * '.repeat(wait)}</div>
+                </div>
               </div>
             </strong>
             <br />
