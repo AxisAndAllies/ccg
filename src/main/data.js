@@ -86,8 +86,8 @@ export const RAW_CARDS = [
   {
     name: 'unicorn',
     attack: 1,
-    health: 3,
-    pow: [[POW.weaken, 2]],
+    health: 4,
+    pow: [[POW.weaken, 1]],
     wait: 0,
   },
   {
@@ -269,7 +269,7 @@ export const RAW_CARDS = [
   {
     name: 'uberbot',
     attack: 2,
-    health: 9,
+    health: 10,
     pow: [
       [POW.rage, 2],
       [POW.pierce, 1],
@@ -289,7 +289,7 @@ export const RAW_CARDS = [
   {
     name: 'snake monster',
     attack: 2,
-    health: 9,
+    health: 8,
     pow: [
       [POW.poison, 2],
       [POW.avenge, 1],

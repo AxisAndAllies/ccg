@@ -60,14 +60,30 @@ const titandeck = [
 
 const entdeck = [
   { id: uuid(), content: newCard('unicorn') },
-  { id: uuid(), content: newCard('unicorn') },
+  { id: uuid(), content: newCard('hydra') },
+  { id: uuid(), content: newCard('hydra') },
   { id: uuid(), content: newCard('griffin') },
   { id: uuid(), content: newCard('griffin') },
-  { id: uuid(), content: newCard('lancer') },
-  { id: uuid(), content: newCard('lancer') },
+  { id: uuid(), content: newCard('uberbot') },
+  { id: uuid(), content: newCard('uberbot') },
+  { id: uuid(), content: newCard('tribal shield') },
   { id: uuid(), content: newCard('snake monster') },
-  { id: uuid(), content: newCard('snake monster') },
-  { id: uuid(), content: newCard('bigshark') },
+  { id: uuid(), content: newCard('spacemarine') },
+  { id: uuid(), content: newCard('spacemarine') },
+  { id: uuid(), content: newCard('spider') },
+  { id: uuid(), content: newCard('spider') },
+];
+
+const progeeDeck = [
+  ...RAW_CARDS.filter((e) => e.pow?.find((x) => x[0] == POW.avenge)).map(
+    (e) => ({
+      id: uuid(),
+      content: newCard(e.name),
+    }),
+  ),
+  { id: uuid(), content: newCard('ent') },
+  { id: uuid(), content: newCard('ent') },
+  { id: uuid(), content: newCard('spider') },
 ];
 
 const stack2 = [
@@ -88,7 +104,7 @@ const allcards = RAW_CARDS.map((e) => ({
 const columnsFromBackend = {
   p1Back: {
     name: 'p1 back',
-    items: griffindeck,
+    items: entdeck,
   },
   p1Front: {
     name: 'p1 front',
@@ -100,7 +116,7 @@ const columnsFromBackend = {
   },
   p2Back: {
     name: 'p2 back',
-    items: stack1,
+    items: progeeDeck,
   },
   stash: {
     name: 'stash',
