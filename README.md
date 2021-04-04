@@ -4,7 +4,7 @@ a collectible card game
 
 ### Screenshot:
 
-![screenshot](./play2.png)
+![screenshot](./play3.png)
 
 ### Unit Abilities:
 
