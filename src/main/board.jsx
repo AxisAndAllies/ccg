@@ -426,15 +426,19 @@ const Card = ({ item, index }) => {
               borderRadius: 12,
               margin: '0 0 8px 0', // if you just specify 8 all around margin you get an ugly pop effect on drop
               minHeight: '120px',
-              backgroundColor: snapshot.isDragging
-                ? wait > 0
-                  ? '#444'
-                  : '#263B4A'
-                : wait > 0
-                ? 'gray'
-                : '#456C86',
+              // backgroundColor: snapshot.isDragging
+              //   ? wait > 0
+              //     ? '#444'
+              //     : '#263B4A'
+              //   : wait > 0
+              //   ? 'gray'
+              //   : '#456C86',
+              background:
+                wait > 0
+                  ? `linear-gradient(to bottom, #888, #555)`
+                  : `linear-gradient(180deg, rgba(86,137,171,1) 25%, rgba(50,87,111,1) 100%)`,
               color: 'white',
-              border: wait > 0 ? '1px solid white' : '1px solid white',
+              // border: wait > 0 ? '1px solid white' : '1px solid white',
               boxShadow: snapshot.isDragging
                 ? '5px 5px 10px black'
                 : '5px 5px 10px gray',
