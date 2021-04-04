@@ -394,6 +394,15 @@ const Card = ({ item, index }) => {
   const numStyle = {
     fontSize: 24,
     fontWeight: 600,
+    borderRadius: '20%',
+    width: 40,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+    marginBottom: '-20px',
+    marginLeft: '-10px',
+    marginRight: '-10px',
   };
 
   return (
@@ -425,7 +434,7 @@ const Card = ({ item, index }) => {
                 ? 'gray'
                 : '#456C86',
               color: 'white',
-              border: wait > 0 ? '2px solid white' : '2px solid white',
+              border: wait > 0 ? '1px solid white' : '1px solid white',
               boxShadow: snapshot.isDragging
                 ? '5px 5px 10px black'
                 : '5px 5px 10px gray',
@@ -445,12 +454,23 @@ const Card = ({ item, index }) => {
                     maxHeight: 60,
                     borderRadius: '50%',
                     border: '2px solid white',
+                    marginTop: '-10px',
                   }}
                   src={getIcon(name)}
                 />
-                <div>
-                  <div style={{ paddingBottom: '1em' }}>{name}</div>
-                  <div>{wait > 0 && ' * '.repeat(wait)}</div>
+                <div style={{ textAlign: 'right' }}>
+                  <div
+                    style={{
+                      paddingBottom: '1em',
+                      textTransform: 'capitalize',
+                      fontSize: '1.1em',
+                    }}
+                  >
+                    {name}
+                  </div>
+                  <div style={{ color: 'white', fontSize: '.9em' }}>
+                    {wait > 0 && ' # '.repeat(wait)}
+                  </div>
                 </div>
               </div>
             </strong>
@@ -459,12 +479,14 @@ const Card = ({ item, index }) => {
             {pow}
             <br />
             <div style={{ color: 'purple' }}>
-              {poisoned?.turns > 0 &&
-                `poisoned (${poisoned.amount}) for ${poisoned.turns}`}
+              {poisoned?.turns > 0
+                ? `poisoned (${poisoned.amount}) for ${poisoned.turns}`
+                : ` `}
             </div>
             <div style={{ color: 'yellow' }}>
-              {weakened?.turns > 0 &&
-                `weakened (${weakened.amount}) for ${weakened.turns}`}
+              {weakened?.turns > 0
+                ? `weakened (${weakened.amount}) for ${weakened.turns}`
+                : ` `}
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -477,6 +499,8 @@ const Card = ({ item, index }) => {
                       : maxAttack < attack
                       ? 'Chartreuse'
                       : 'white',
+                  // backgroundColor: '#b38600',
+                  backgroundColor: '#333',
                 }}
               >
                 {attack}
@@ -490,6 +514,7 @@ const Card = ({ item, index }) => {
                       : maxHealth < health
                       ? 'Chartreuse'
                       : 'white',
+                  backgroundColor: '#800000',
                 }}
               >
                 {health}
