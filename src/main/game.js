@@ -1,7 +1,7 @@
 //@ts-check
 import { proxy } from 'valtio';
 import { POW } from './data';
-import { getPower, healUnit } from './helpers';
+import { getPower, healUnit, sleep } from './helpers';
 
 export const STATE = {
   p1: {
@@ -40,7 +40,7 @@ export const CURRENT = proxy({
   },
 });
 
-export const processCombat = (attCards, defCards) => {
+export const processCombat = async (attCards, defCards) => {
   let extraDamage = 0;
   // attack
   attCards.forEach((e, i) => {
@@ -85,6 +85,9 @@ export const processCombat = (attCards, defCards) => {
       extraDamage += e.content.attack;
     }
   });
+  // wait a bit to not be too jarring
+  let cardsDied = [...attCards, ...defCards].find((e) => e.content < 0);
+  if (cardsDied) await sleep(500);
   // remove dead
   attCards = attCards.filter((e) => e.content.health > 0);
   defCards = defCards.filter((e) => e.content.health > 0);

@@ -12,7 +12,7 @@ import {
   processEndOfTurnActions,
   nextState,
 } from './game';
-import { newCard, getPower, healUnit, getBaseStat } from './helpers';
+import { newCard, getPower, healUnit, getBaseStat, sleep } from './helpers';
 
 const stack1 = [
   { id: uuid(), content: newCard('sauropod') },
@@ -172,14 +172,17 @@ function Board() {
   const [columns, setColumns] = useState(columnsFromBackend);
   const snapshot = useProxy(CURRENT, { sync: true });
 
-  const resolveTurnActions = () => {
+  const resolveTurnActions = async () => {
     if (snapshot.state == STATE.p1.attack) {
       let newCols = { ...columns };
 
-      let { attCards, defCards, extraDamage } = processCombat(
+      let { attCards, defCards, extraDamage } = await processCombat(
         newCols.p1Front.items,
         newCols.p2Front.items,
       );
+
+      // wait a bit to not be too jarring
+      await sleep(750);
 
       attCards.forEach((e, i) => {
         processEndOfTurnActions(e, true);
@@ -200,10 +203,14 @@ function Board() {
       // CURRENT.state = nextState(snapshot.state);
     } else if (snapshot.state === STATE.p2.attack) {
       let newCols = { ...columns };
-      let { attCards, defCards, extraDamage } = processCombat(
+      let { attCards, defCards, extraDamage } = await processCombat(
         newCols.p2Front.items,
         newCols.p1Front.items,
       );
+
+      // wait a bit to not be too jarring
+      await sleep(750);
+
       attCards.forEach((e, i) => {
         processEndOfTurnActions(e, true);
         const left = i > 0 ? getPower(attCards[i - 1], POW.heal) : 0;

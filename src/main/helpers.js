@@ -36,3 +36,10 @@ export const healUnit = (e, amount) => {
   if (e.content.health + amount <= getBaseStat(e.content.name).health)
     e.content.health += amount;
 };
+
+/**
+ * Sleep for a number of millliseconds
+ * @param {*} ms
+ * @returns
+ */
+export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
