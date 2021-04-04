@@ -34,6 +34,7 @@ import bigbot from '../assets/bigbot.svg';
 import bigshark from '../assets/bigshark.svg';
 import cosmicEgg from '../assets/cosmic egg.svg';
 import crow from '../assets/crow.svg';
+import dragon from '../assets/dragon.svg';
 import ent from '../assets/ent.svg';
 import glassCannon from '../assets/glass cannon.svg';
 import griffin from '../assets/griffin.svg';
@@ -44,6 +45,7 @@ import magmaTitan from '../assets/magma titan.svg';
 import minibot from '../assets/minibot.svg';
 import midbot from '../assets/midbot.svg';
 import minotaur from '../assets/minotaur.svg';
+import paladin from '../assets/paladin.svg';
 import sauropod from '../assets/sauropod.svg';
 import scavenger from '../assets/scavenger.svg';
 import snake from '../assets/snake.svg';
@@ -125,7 +127,7 @@ export const RAW_CARDS = [
     name: 'wraith',
     attack: 4,
     health: 7,
-    pow: [[POW.absorb, 2]],
+    pow: [[POW.absorb, 3]],
     wait: 1,
   },
   {
@@ -189,11 +191,11 @@ export const RAW_CARDS = [
   {
     name: 'scavenger',
     attack: 4,
-    health: 7,
+    health: 8,
     wait: 2,
     pow: [
       [POW.absorb, 2],
-      [POW.rage, 2],
+      [POW.rage, 1],
     ],
   },
   {
@@ -273,7 +275,7 @@ export const RAW_CARDS = [
     health: 10,
     pow: [
       [POW.rage, 2],
-      [POW.pierce, 1],
+      [POW.pierce, 2],
     ],
     wait: 2,
   },
@@ -293,7 +295,6 @@ export const RAW_CARDS = [
     health: 8,
     pow: [
       [POW.poison, 2],
-      [POW.avenge, 1],
       [POW.pierce, 1],
     ],
     wait: 3,
@@ -335,5 +336,26 @@ export const RAW_CARDS = [
       [POW.weaken, 1],
     ],
     wait: 3,
+  },
+  {
+    name: 'paladin',
+    attack: 4,
+    health: 12,
+    pow: [
+      [POW.rally, 2],
+      [POW.armor, 2],
+    ],
+    wait: 4,
+  },
+  {
+    name: 'dragon',
+    attack: 5,
+    health: 13,
+    pow: [
+      [POW.rage, 1],
+      [POW.absorb, 3],
+      [POW.armor, 1],
+    ],
+    wait: 4,
   },
 ];

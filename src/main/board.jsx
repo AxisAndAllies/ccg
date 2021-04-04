@@ -66,19 +66,18 @@ const titandeck = [
 ];
 
 const entdeck = [
-  { id: uuid(), content: newCard('unicorn') },
   { id: uuid(), content: newCard('hydra') },
   { id: uuid(), content: newCard('hydra') },
-  { id: uuid(), content: newCard('griffin') },
-  { id: uuid(), content: newCard('griffin') },
-  { id: uuid(), content: newCard('uberbot') },
-  { id: uuid(), content: newCard('uberbot') },
+  { id: uuid(), content: newCard('hydra') },
+  { id: uuid(), content: newCard('ent') },
+  { id: uuid(), content: newCard('ent') },
+  { id: uuid(), content: newCard('ent') },
   { id: uuid(), content: newCard('tribal shield') },
-  { id: uuid(), content: newCard('snake monster') },
-  { id: uuid(), content: newCard('spacemarine') },
-  { id: uuid(), content: newCard('spacemarine') },
-  { id: uuid(), content: newCard('spider') },
-  { id: uuid(), content: newCard('spider') },
+  { id: uuid(), content: newCard('sauropod') },
+  { id: uuid(), content: newCard('cosmic egg') },
+  { id: uuid(), content: newCard('cosmic egg') },
+  // { id: uuid(), content: newCard('scavenger') },
+  { id: uuid(), content: newCard('bigbot') },
 ];
 
 const progeeDeck = [
