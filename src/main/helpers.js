@@ -31,8 +31,8 @@ export const getPower = ({ content }, power) => {
  * @param {*} amount
  * @returns
  */
-export const healUnit = (e, amount) =>
-  (e.content.health = Math.min(
-    e.content.health + amount,
-    getBaseStat(e.content.name).health,
-  ));
+export const healUnit = (e, amount) => {
+  // NOTE: does nothing for already overhealed units
+  if (e.content.health + amount <= getBaseStat(e.content.name).health)
+    e.content.health += amount;
+};
