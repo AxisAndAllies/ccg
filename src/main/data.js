@@ -22,10 +22,11 @@ export const POW_DESCRIPT = {
   armor: 'reduce damage from each attack',
   heal: 'heal adjacent allies per turn, only works in frontrow',
   regen: 'heal self per turn',
-  rally: 'temporarily increase adjacent allies attack', // TODO
+  rally: 'temporarily increase adjacent allies attack',
   absorb: 'increase hp on kill, can exceed max hp',
   rage: 'increase attack on kill, can exceed max attack',
   weaken: 'reduce enemy attack for 3 turns. Does not stack.',
+  immune: 'immune to weaken and poison', // TODO
 };
 
 import bigCannon from '../assets/big cannon.svg';

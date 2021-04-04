@@ -1,6 +1,6 @@
 //@ts-check
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { v4 as uuid } from 'uuid';
 import { useProxy } from 'valtio';
@@ -177,7 +177,31 @@ const onDragEnd = (result, columns, setColumns) => {
 
 function Board() {
   const [columns, setColumns] = useState(columnsFromBackend);
+  const [isDirty, setDirty] = useState(false);
   const snapshot = useProxy(CURRENT, { sync: true });
+
+  useEffect(() => {
+    // recalculate rally power on column change
+    let newCols = { ...columns };
+    let cards =
+      snapshot.state == STATE.p1.attack
+        ? columns.p1Front.items
+        : columns.p2Front.items;
+
+    cards.forEach((e, i) => {
+      const leftRally = i > 0 ? getPower(cards[i - 1], POW.rally) : 0;
+      const rightRally =
+        i < cards.length - 1 ? getPower(cards[i + 1], POW.rally) : 0;
+      rallyUnit(e, leftRally + rightRally);
+    });
+    if (snapshot.state == STATE.p1.attack) {
+      columns.p1Front.items = cards;
+    } else {
+      columns.p2Front.items = cards;
+    }
+    setColumns(newCols);
+    setDirty(false);
+  }, [isDirty]);
 
   const doFrontRowEndOfTurnActions = (cards) => {
     cards.forEach((e, i) => {
@@ -289,6 +313,7 @@ function Board() {
             if (noMove) {
               return;
             }
+            setDirty(true);
             onDragEnd(result, columns, setColumns);
 
             const invalidMove =
@@ -296,21 +321,6 @@ function Board() {
                 dest.droppableId == 'p1Back') ||
               (source.droppableId == 'p2Back' && dest.droppableId == 'p2Back');
             if (invalidMove) return;
-
-            // recalculate rally power
-            // let newCols = { ...columns };
-            // let attCards = newCols.p1Front.items;
-            // attCards.forEach((e, i) => {
-            //   const leftRally =
-            //     i > 0 ? getPower(attCards[i - 1], POW.rally) : 0;
-            //   const rightRally =
-            //     i < attCards.length - 1
-            //       ? getPower(attCards[i + 1], POW.rally)
-            //       : 0;
-            //   healUnit(e, leftRally + rightRally);
-            // });
-            // newCols.p1Front.items = attCards;
-            // setColumns(newCols);
 
             // transition to attack phase
             CURRENT.state = nextState(snapshot.state);
